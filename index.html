@@ -440,7 +440,7 @@ const CONFIG = {
 // LANGUAGE
 // =====================================================================
 const T = {
- en:{kC:"Covered walkway",kB:"Footbridge (usually covered)",kU:"Subway / underpass",kI:"Indoor corridor",kT:"Tree-lined street",kM:"Shopping mall (indoor, air-con)",kUnnamed:"Unnamed section",lgIndoor:"Subway / indoor / mall",loadingShade:"Loading covered walkways and malls…",shadeSample:" Real shade data could not load, so sample walkways were used.",swap:"Swap start and destination",lgRShade:"Route in shade",lgRSun:"Route in the sun",segShade:"In the shade",segSun:"In the sun",bestRoute:"Best route (shadiest and fastest)",shelOnWay:"Air-conditioned shelter on the way",setAbout:"About & credits",crData:"Data, maps & services",crCourse:"Course & project materials",aboutTxt:"Cool HK is a student group project for GEOG2147 Build Smart Cities with GIS (HKU). Routes are suggestions only: follow road signs and the Observatory's heat advice.",sampleStartLbl:"Victoria Park (sample start)",tabPublic:"Public · Free",tabPremium:"Premium",pubTitle:"Walk in the shade",pubHint:"Type where you're going. Leave the start empty to use your current location.",
+ en:{kC:"Covered walkway",kB:"Footbridge (usually covered)",kU:"Subway / underpass",kI:"Indoor corridor",kT:"Tree-lined street",kM:"Shopping mall (indoor, air-con)",kUnnamed:"Unnamed section",lgIndoor:"Subway / indoor / mall",loadingShade:"Loading covered walkways and malls…",routingShade:"Comparing routes through footbridges, subways and malls…",shadeSample:" Real shade data could not load, so sample walkways were used.",swap:"Swap start and destination",lgRShade:"Route in shade",lgRSun:"Route in the sun",segShade:"In the shade",segSun:"In the sun",bestRoute:"Best route (shadiest and fastest)",shelOnWay:"Air-conditioned shelter on the way",setAbout:"About & credits",crData:"Data, maps & services",crCourse:"Course & project materials",aboutTxt:"Cool HK is a student group project for GEOG2147 Build Smart Cities with GIS (HKU). Routes are suggestions only: follow road signs and the Observatory's heat advice.",sampleStartLbl:"Victoria Park (sample start)",tabPublic:"Public · Free",tabPremium:"Premium",pubTitle:"Walk in the shade",pubHint:"Type where you're going. Leave the start empty to use your current location.",
   startPh:"My current location",destPh:"Nearest cool shelter",pick:"Pick start point on map",go:"Find shaded route",mostShaded:"Most shaded",fastest:"Fastest",
   shadeOnRoute:"Shade on this route",otherShelters:"Other cool shelters nearby",lgCovered:"Covered walkway / footbridge",lgTrees:"Tree-lined street",lgShelter:"Cool shelter (air-con)",
   premFor:"For government departments & NGOs",plansTitle:"Choose a Premium plan",plansHint:"The public app stays free. Premium plans pay for heat-vulnerability analytics and services. Prices are proposals for the demo.",
@@ -477,7 +477,7 @@ const T = {
   hdrMtr:"MTR stations",hdrExits:"Station exits",hdrPlaces:"Places",hdrSearch:"Addresses & places",exit:"Exit",stCentre:"Station centre",chooseExit:"Exit:",
   exitsLoading:"Loading exits…",exitsNone:"Exit locations need an internet connection.",stSuf:" Station",exitLabel:(st,r)=>`${st} Station · Exit ${r}`,
   linesLbl:"Lines",exitsLbl:"Exits",typeShelter:"Cool shelter",typeArea:"Neighbourhood",noSugg:"No matches yet. Keep typing or press Find.",hdrAddr:"Addresses",hdrGoogle:"Google Maps places",srcALS:"HK address lookup",srcGeo:"HK GeoInfo Map",openGmaps:"Open walking directions in Google Maps",settings:"Settings",setLang:"Language",setView:"View",setMap:"Map type",setLayers:"Show on map",vAuto:"Auto",vPhone:"📱 Phone",vDesk:"💻 Computer",pMtr:"MTR lines & stations",pShade:"Covered walkways & shade",pShel:"Cool shelters"},
- zh:{kC:"有蓋行人路",kB:"行人天橋（多數有蓋）",kU:"行人隧道／地下通道",kI:"室內通道",kT:"林蔭街道",kM:"商場（室內有冷氣）",kUnnamed:"未命名路段",lgIndoor:"隧道／室內／商場",loadingShade:"正在載入有蓋通道及商場資料…",shadeSample:" 未能載入真實遮蔭數據，暫用示範通道。",swap:"對調起點及目的地",lgRShade:"路線：有遮蔭",lgRSun:"路線：曬太陽",segShade:"有遮蔭",segSun:"曬太陽",bestRoute:"最佳路線（最陰涼亦最快）",shelOnWay:"沿途有冷氣避暑點",setAbout:"關於及資料來源",crData:"數據、地圖及服務",crCourse:"課程及專題資料",aboutTxt:"清涼香港是香港大學 GEOG2147「以 GIS 建設智慧城市」的學生小組專題。路線只供參考，請留意路牌及天文台的酷熱天氣提示。",sampleStartLbl:"維多利亞公園（示範起點）",tabPublic:"公眾版 · 免費",tabPremium:"進階版",pubTitle:"行陰涼路線",pubHint:"輸入目的地。起點留空即使用你目前的位置。",
+ zh:{kC:"有蓋行人路",kB:"行人天橋（多數有蓋）",kU:"行人隧道／地下通道",kI:"室內通道",kT:"林蔭街道",kM:"商場（室內有冷氣）",kUnnamed:"未命名路段",lgIndoor:"隧道／室內／商場",loadingShade:"正在載入有蓋通道及商場資料…",routingShade:"正在比較經天橋、隧道及商場的路線…",shadeSample:" 未能載入真實遮蔭數據，暫用示範通道。",swap:"對調起點及目的地",lgRShade:"路線：有遮蔭",lgRSun:"路線：曬太陽",segShade:"有遮蔭",segSun:"曬太陽",bestRoute:"最佳路線（最陰涼亦最快）",shelOnWay:"沿途有冷氣避暑點",setAbout:"關於及資料來源",crData:"數據、地圖及服務",crCourse:"課程及專題資料",aboutTxt:"清涼香港是香港大學 GEOG2147「以 GIS 建設智慧城市」的學生小組專題。路線只供參考，請留意路牌及天文台的酷熱天氣提示。",sampleStartLbl:"維多利亞公園（示範起點）",tabPublic:"公眾版 · 免費",tabPremium:"進階版",pubTitle:"行陰涼路線",pubHint:"輸入目的地。起點留空即使用你目前的位置。",
   startPh:"我目前的位置",destPh:"最近的避暑點",pick:"在地圖上揀起點",go:"搵最陰涼路線",mostShaded:"最陰涼",fastest:"最快",
   shadeOnRoute:"路線上的遮蔭",otherShelters:"附近其他避暑點",lgCovered:"有蓋行人通道／天橋",lgTrees:"林蔭街道",lgShelter:"避暑點（有冷氣）",
   premFor:"適用於政府部門及非政府機構",plansTitle:"選擇進階版計劃",plansHint:"公眾版永遠免費。進階版計劃收費提供熱風險分析及服務。價錢為示範用建議。",
@@ -673,17 +673,47 @@ function loadShadeData(){
       const pad=0.0005;o.bb=[b[0]-pad,b[1]-pad,b[2]+pad,b[3]+pad];
       if(o.pts){let L=0;for(let j=1;j<o.pts.length;j++)L+=dist(o.pts[j-1],o.pts[j]);o.len=L;o.mid=o.pts[Math.floor(o.pts.length/2)]}else o.mid=[o.lat,o.lng];
       gridAdd(i,o.bb)});
-    OSM=F; SHADE_DATE=d.date||""; drawOSM(); applyPrefs(); return F;
+    OSM=F; SHADE_DATE=d.date||""; TILES=new Set(d.tiles||[]); drawOSM(); applyPrefs(); return F;
   }).catch(()=>{OSM=[];return OSM});
   return osmP;
 }
-let SHADE_DATE="";
+let SHADE_DATE="", TILES=new Set(), LIVE=new Set();
+function prepFeature(o,i){const P=o.ring||o.pts||[[o.lat,o.lng]];let b=[90,180,-90,-180];P.forEach(([a,c])=>{b=[Math.min(b[0],a),Math.min(b[1],c),Math.max(b[2],a),Math.max(b[3],c)]});
+  o.bb=[b[0]-.0005,b[1]-.0005,b[2]+.0005,b[3]+.0005];
+  if(o.pts){let L=0;for(let j=1;j<o.pts.length;j++)L+=dist(o.pts[j-1],o.pts[j]);o.len=L;o.mid=o.pts[Math.floor(o.pts.length/2)]}else o.mid=[o.lat,o.lng];
+  gridAdd(i,o.bb)}
+// the saved file lists which 0.05° tiles (or 0.025° sub-tiles) it covers; anything else on the trip is fetched live
+const tileKeys=(lat,lng)=>{const ma=Math.floor(lat*20+1e-9)/20, mb=Math.floor(lng*20+1e-9)/20, sa=Math.floor(lat*40+1e-9)/40, sb=Math.floor(lng*40+1e-9)/40;
+  const mk=(+ma.toFixed(2))+"_"+(+mb.toFixed(2)); return{mk,sk:mk+"/"+(+(sa-ma).toFixed(3))+"/"+(+(sb-mb).toFixed(3)),sa,sb}};
+function osmToFeatures(els){const F=[];(els||[]).forEach(e=>{const g=e.tags||{};const en=g["name:en"]||(/[a-z]/i.test(g.name||"")?g.name:"")||"",zh=g["name:zh"]||(/[\u4e00-\u9fff]/.test(g.name||"")?g.name:"")||"";
+  if(g.shop){let ring=null,lat=e.lat,lng=e.lon;const geo=e.type==="way"?e.geometry:e.type==="relation"&&e.members?(e.members.find(m=>m.role==="outer"&&m.geometry)||{}).geometry:null;
+    if(geo){ring=geo.map(p=>[p.lat,p.lon]);lat=ring.reduce((s,p)=>s+p[0],0)/ring.length;lng=ring.reduce((s,p)=>s+p[1],0)/ring.length}
+    if(lat!=null)F.push({k:"m",en,zh,lat,lng,ring:ring&&ring.length>2?ring:null});return}
+  if(!e.geometry||e.geometry.length<2)return;let k;
+  if(g.natural==="tree_row")k="t";else if(g.highway==="corridor")k="i";else if(g.tunnel)k="u";else if(g.bridge){if(g.covered==="no")return;k=g.covered?"c":"b"}else if(g.covered&&g.covered!=="no")k="c";else return;
+  F.push({k,en,zh,pts:e.geometry.map(p=>[p.lat,p.lon])})});return F}
+async function fillGaps(a,b){
+  if(!OSM) return; const need=new Map();
+  for(let la=Math.min(a[0],b[0])-.004;la<=Math.max(a[0],b[0])+.004+.025;la+=.025)for(let ln=Math.min(a[1],b[1])-.004;ln<=Math.max(a[1],b[1])+.004+.025;ln+=.025){
+    const k=tileKeys(Math.min(la,Math.max(a[0],b[0])+.004),Math.min(ln,Math.max(a[1],b[1])+.004)); if(!TILES.has(k.mk)&&!TILES.has(k.sk)&&!LIVE.has(k.sk)) need.set(k.sk,k); }
+  const list=[...need.values()].slice(0,4); if(!list.length) return;
+  $("status").textContent=t("loadingShade");
+  await Promise.all(list.map(async k=>{ LIVE.add(k.sk); let F=null;
+    try{const c=JSON.parse(localStorage.getItem("coolhk-shade-"+k.sk)||"null");if(c&&Date.now()-c.t<30*864e5)F=c.F}catch(e){}
+    if(!F){ const bb=`${k.sa.toFixed(3)},${k.sb.toFixed(3)},${(k.sa+.025).toFixed(3)},${(k.sb+.025).toFixed(3)}`;
+      const q=`[out:json][timeout:25];(way["highway"~"^(footway|pedestrian|path|steps|corridor|living_street)$"]["covered"~"^(yes|arcade|colonnade|partial)$"](${bb});way["highway"~"^(footway|pedestrian|path|steps|corridor)$"]["tunnel"~"^(yes|building_passage)$"](${bb});way["highway"~"^(footway|pedestrian|path|steps|corridor)$"]["bridge"](${bb});way["highway"="corridor"](${bb});way["natural"="tree_row"](${bb});nwr["shop"~"^(mall|department_store)$"](${bb}););out tags geom qt;`;
+      const ctl=new AbortController(),tm=setTimeout(()=>ctl.abort(),10000);
+      try{const j=await fetch("https://overpass-api.de/api/interpreter",{method:"POST",body:"data="+encodeURIComponent(q),headers:{"Content-Type":"application/x-www-form-urlencoded"},signal:ctl.signal}).then(r=>r.json());
+        F=osmToFeatures(j.elements); try{localStorage.setItem("coolhk-shade-"+k.sk,JSON.stringify({t:Date.now(),F}))}catch(e){}}catch(e){LIVE.delete(k.sk)}finally{clearTimeout(tm)} }
+    if(F&&F.length){ F.forEach(o=>{OSM.push(o);prepFeature(o,OSM.length-1)}); GN=null; COMP=[]; NG=new Map(); }
+  }));
+}
 function inPoly(p,ring){let c=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const[a,b]=ring[i],[d,e]=ring[j];if((a>p[0])!==(d>p[0])&&p[1]<(e-b)*(p[0]-a)/(d-a)+b)c=!c}return c}
 const TOL={c:15,b:14,u:12,i:12,t:12};
 function osmShadeAt(m){
   const ids=grid.get(gkey(m[0],m[1])); if(!ids) return -1;
   for(const i of ids){const o=OSM[i]; if(m[0]<o.bb[0]||m[0]>o.bb[2]||m[1]<o.bb[1]||m[1]>o.bb[3]) continue;
-    if(o.k==="m"){ if(o.ring?inPoly(m,o.ring):dist(m,[o.lat,o.lng])<40) return i; }
+    if(o.k==="m"){ if(o.ring?(inPoly(m,o.ring)||lineDist(m,o.ring)<6):dist(m,[o.lat,o.lng])<40) return i; }
     else if(lineDist(m,o.pts)<TOL[o.k]) return i; }
   return -1;
 }
@@ -694,23 +724,75 @@ function osmNear(a,b,pad){ // features whose cells touch the box around a-b
   for(let la=la0;la<=la1;la++)for(let ln=ln0;ln<=ln1;ln++){const ids=grid.get(la+":"+ln);if(ids)ids.forEach(i=>out.add(i))}
   return [...out];
 }
-// Pick places worth detouring through: clusters of covered walkways / footbridges / subways / malls
-// near the straight line between start and destination. Each becomes one or two waypoints for the router.
+// SHADE NETWORK: covered walkways, footbridges, subways and indoor corridors joined into a walkable graph,
+// with malls added as "walk-through" areas. Routes follow the real shaded path through the network and
+// only ask the street router for the legs to get on and off it.
+let GN=null, COMP=[], NG=new Map();
+function buildShadeGraph(){
+  if(GN||!(OSM&&OSM.length)) return; GN=new Map();
+  const K=p=>Math.round(p[0]*1e5)+":"+Math.round(p[1]*1e5);
+  const node=p=>{const k=K(p);let n=GN.get(k);if(!n)GN.set(k,n={p,adj:[],c:-1});return n};
+  const link=(x,y,L)=>{x.adj.push([y,L]);y.adj.push([x,L])};
+  const ends=[];
+  OSM.forEach(o=>{ if(!o.pts||o.k==="t") return; let prev=null;
+    o.pts.forEach(p=>{const n=node(p);if(prev&&prev!==n)link(prev,n,dist(prev.p,n.p));prev=n}); ends.push(node(o.pts[0]),node(o.pts.at(-1))); });
+  const g=new Map(),C=0.0001; // join loose ends closer than 10 m (stairs, small mapping gaps)
+  ends.forEach(n=>{const a=Math.round(n.p[0]/C),b=Math.round(n.p[1]/C);
+    for(let da=-1;da<=1;da++)for(let db=-1;db<=1;db++)(g.get((a+da)+":"+(b+db))||[]).forEach(m=>{if(m!==n){const d=dist(n.p,m.p);if(d<10&&!n.adj.some(x=>x[0]===m))link(n,m,d)}});
+    const k=a+":"+b;if(!g.has(k))g.set(k,[]);g.get(k).push(n)});
+  const grid0=new Map(); GN.forEach(n=>{const k=gkey(n.p[0],n.p[1]);if(!grid0.has(k))grid0.set(k,[]);grid0.get(k).push(n)});
+  OSM.forEach(o=>{ if(o.k!=="m") return; // malls: walk straight through between any two sides
+    let R=o.ring?o.ring.slice():[[o.lat-.00018,o.lng-.00018],[o.lat-.00018,o.lng+.00018],[o.lat+.00018,o.lng+.00018],[o.lat+.00018,o.lng-.00018]];
+    if(R.length>3&&R[0][0]===R.at(-1)[0]&&R[0][1]===R.at(-1)[1]) R.pop(); if(R.length>16) R=R.filter((_,k)=>k%Math.ceil(R.length/16)===0);
+    const ns=R.map(node); for(let x=0;x<ns.length;x++)for(let y=x+1;y<ns.length;y++)link(ns[x],ns[y],dist(ns[x].p,ns[y].p));
+    ns.forEach(n=>(grid0.get(gkey(n.p[0],n.p[1]))||[]).forEach(m=>{const d=dist(n.p,m.p);if(m!==n&&d<20)link(n,m,d)})); });
+  let cid=0; GN.forEach(n=>{ if(n.c>=0) return; const st=[n],mem=[]; n.c=cid; let len=0;
+    while(st.length){const x=st.pop();mem.push(x);x.adj.forEach(([y,L])=>{len+=L/2;if(y.c<0){y.c=cid;st.push(y)}})} if(len>=40) COMP.push({id:cid,mem}); cid++; });
+  COMP.forEach(c=>c.mem.forEach(n=>{const k=gkey(n.p[0],n.p[1]);if(!NG.has(k))NG.set(k,[]);NG.get(k).push(n)}));
+}
+function shortest(s,t){ // Dijkstra with a small binary heap
+  const D=new Map([[s,0]]),P=new Map(),H=[[0,s]],done=new Set();
+  const push=e=>{H.push(e);let i=H.length-1;while(i>0){const p=(i-1)>>1;if(H[p][0]<=H[i][0])break;[H[p],H[i]]=[H[i],H[p]];i=p}};
+  const pop=()=>{const top=H[0],last=H.pop();if(H.length){H[0]=last;let i=0;for(;;){const l=2*i+1,q=l+1;let m=i;if(l<H.length&&H[l][0]<H[m][0])m=l;if(q<H.length&&H[q][0]<H[m][0])m=q;if(m===i)break;[H[m],H[i]]=[H[i],H[m]];i=m}}return top};
+  while(H.length){const[d,x]=pop();if(done.has(x))continue;done.add(x);if(x===t||done.size>20000)break;x.adj.forEach(([y,L])=>{const nd=d+L;if(nd<(D.get(y)??Infinity)){D.set(y,nd);P.set(y,x);push([nd,y])}})}
+  if(!done.has(t)) return null; const pts=[t.p]; let x=t; while(P.has(x)){x=P.get(x);pts.push(x.p)} return{pts:pts.reverse(),len:D.get(t)};
+}
+// For each piece of the shade network near the trip: get on as close to the start as possible,
+// get off as close to the destination as possible, and keep it if the shade gained beats the detour.
 function shadeCandidates(a,b){
-  if(!(OSM&&OSM.length)){ const w=shadeWaypoints(a,b); return w.length?[w.flatMap(x=>x.pts)]:[]; }
+  buildShadeGraph(); if(!GN) return [];
   const AB=dist(a,b); if(AB<120) return [];
-  const corr=Math.max(180,Math.min(600,AB*.35));
-  const ids=osmNear(a,b,corr).filter(i=>OSM[i].k!=="t");
-  const feats=ids.map(i=>{const o=OSM[i],p=along(o.mid,a,b);return{o,p,gain:o.k==="m"?90:Math.min(o.len||0,250)}})
-    .filter(f=>f.p.s>0.04&&f.p.s<0.96&&f.p.d<corr);
-  feats.forEach(f=>{ // value of the whole cluster around this feature
-    f.cl=feats.reduce((s,g)=>s+(dist(f.o.mid,g.o.mid)<90?g.gain:0),0);
-    const det=dist(a,f.o.mid)+dist(f.o.mid,b)-AB; f.score=f.cl-0.7*det; });
-  const top=feats.filter(f=>f.score>20).sort((x,y)=>y.score-x.score), pick=[];
-  for(const f of top){ if(pick.every(g=>dist(g.o.mid,f.o.mid)>160)) pick.push(f); if(pick.length>=4) break; }
-  const C=pick.map(f=>[f.o.mid]);
-  if(pick.length>=2){ const chain=pick.slice(0,3).sort((x,y)=>x.p.s-y.p.s).map(f=>f.o.mid); C.push(chain); }
-  return C;
+  const corr=Math.max(200,Math.min(700,AB*.4)), pl=corr/110540, pn=corr/KX, byC=new Map();
+  for(let la=Math.floor((Math.min(a[0],b[0])-pl)/GRIDC);la<=Math.floor((Math.max(a[0],b[0])+pl)/GRIDC);la++)
+    for(let ln=Math.floor((Math.min(a[1],b[1])-pn)/GRIDC);ln<=Math.floor((Math.max(a[1],b[1])+pn)/GRIDC);ln++)
+      (NG.get(la+":"+ln)||[]).forEach(n=>{const p=along(n.p,a,b);if(p.d<corr&&p.s>-.1&&p.s<1.1){if(!byC.has(n.c))byC.set(n.c,[]);byC.get(n.c).push(n)}});
+  const spread=arr=>{const o=[];for(const n of arr){if(o.every(m=>dist(m.p,n.p)>60))o.push(n);if(o.length>=3)break}return o};
+  const C=[];
+  byC.forEach(ns=>{ if(ns.length<3) return;
+    const ea=spread([...ns].sort((x,y)=>dist(a,x.p)-dist(a,y.p))), xb=spread([...ns].sort((x,y)=>dist(b,x.p)-dist(b,y.p)));
+    let best=null;
+    ea.forEach(en=>xb.forEach(ex=>{ if(en===ex) return; const s1=along(en.p,a,b).s, s2=along(ex.p,a,b).s; if(s2<=s1) return;
+      const path=shortest(en,ex); if(!path) return;
+      const det=dist(a,en.p)*1.25+path.len+dist(ex.p,b)*1.25-AB*1.25, score=path.len-0.8*det;
+      if(!best||score>best.score) best={en,ex,path,score,s1,s2}; }));
+    if(best&&best.score>30) C.push(best); });
+  C.sort((x,y)=>y.score-x.score);
+  const top=C.slice(0,3), out=top.map(c=>[c]);
+  const chain=[]; [...C.slice(0,5)].sort((x,y)=>x.s1-y.s1).forEach(c=>{ if(!chain.length||c.s1>=chain.at(-1).s2-.02) chain.push(c); });
+  if(chain.length>1) out.push(chain);
+  return out;
+}
+// one street-router call per option: start → (shade path) → … → destination; shaded legs use the real network path
+async function viaShade(a,b,segs){
+  const pts=[a]; segs.forEach(s=>pts.push(s.en.p,s.ex.p)); pts.push(b);
+  const q=pts.map(p=>`${p[1]},${p[0]}`).join(";"), ctl=new AbortController(), tm=setTimeout(()=>ctl.abort(),12000);
+  try{
+    const j=await fetch(`https://routing.openstreetmap.de/routed-foot/route/v1/foot/${q}?overview=false&steps=true&geometries=geojson`,{signal:ctl.signal}).then(r=>r.json());
+    if(!j.routes||!j.routes[0]) return null; let coords=[],m=0;
+    j.routes[0].legs.forEach((lg,i)=>{ if(i%2){const s=segs[(i-1)/2];coords=coords.concat(s.path.pts);m+=s.path.len}
+      else{lg.steps.forEach(st=>{coords=coords.concat(st.geometry.coordinates.map(([x,y])=>[y,x]))});m+=lg.distance} });
+    return coords.length>1?{coords,meters:m,live:true}:null;
+  }catch(e){return null}finally{clearTimeout(tm)}
 }
 const KIND_KEY={c:"kC",b:"kB",u:"kU",i:"kI",t:"kT",m:"kM"};
 function osmName(o){return (lang==="zh"?(o.zh||o.en):(o.en||o.zh))||""}
@@ -1262,16 +1344,24 @@ const getRoutes=async(pts,alts)=>{try{return await osrm(pts,alts)}catch(e){retur
 async function plan(id){
   if(!OSM){ $("status").textContent=t("loadingShade"); await Promise.race([loadShadeData(),new Promise(r=>setTimeout(r,8000))]); if(id!==reqId) return; }
   $("status").textContent=t("routing");
-  const a=[startPoint.lat,startPoint.lng], b=[destPoint.lat,destPoint.lng], cands=shadeCandidates(a,b);
-  const [direct,...viaShade]=await Promise.all([getRoutes([a,b],true),...cands.map(w=>getRoutes([a,...w,b],false))]);
-  if(id!==reqId) return;
-  const fast=direct[0], all=[...direct,...viaShade.flat()];
+  const a=[startPoint.lat,startPoint.lng], b=[destPoint.lat,destPoint.lng];
+  if(OSM&&OSM.length) await Promise.race([fillGaps(a,b),new Promise(r=>setTimeout(r,11000))]);
+  if(id!==reqId) return; $("status").textContent=t("routing");
+  const direct=await getRoutes([a,b],true); if(id!==reqId) return;
+  const extra=[];
+  if(direct[0].live){
+    $("status").textContent=t("routingShade");
+    const cands=(OSM&&OSM.length)?shadeCandidates(a,b):[];
+    for(let i=0;i<cands.length;i+=2){ const got=await Promise.all(cands.slice(i,i+2).map(c=>viaShade(a,b,c))); if(id!==reqId) return; got.forEach(x=>x&&extra.push(x)); }
+    if(!(OSM&&OSM.length)){ const w=shadeWaypoints(a,b); if(w.length) extra.push(...await getRoutes([a,...w.flatMap(x=>x.pts),b],false)); }
+  }
+  const fast=direct[0], all=[...direct,...extra];
   all.forEach(r=>r.stats=shadeStats(r.coords));
   // choose the option with the least time in the sun; extra walking counts against it a little,
   // and it must save at least half a minute of sun and stay within 1.5x the fastest distance
-  const sun=r=>r.meters*(1-r.stats.pct), cost=r=>sun(r)+0.25*Math.max(0,r.meters-fast.meters);
+  const sun=r=>r.meters*(1-r.stats.pct), cost=r=>sun(r)+0.15*Math.max(0,r.meters-fast.meters);
   let sh=fast;
-  all.forEach(r=>{ if(r===fast||r.meters>fast.meters*1.5) return; if(sun(fast)-sun(r)>=WALK/2 && cost(r)<cost(sh)) sh=r; });
+  all.forEach(r=>{ if(r===fast||r.meters>fast.meters*1.45) return; if(sun(fast)-sun(r)>=WALK/2 && cost(r)<cost(sh)) sh=r; });
   const shadeNote=(OSM&&OSM.length)?"":t("shadeSample");
   routes={fast,shade:sh,note:shadeNote}; chosen="shade"; sheetTo("peek"); renderRoutes(true);
   if($("app").dataset.layout==="phone") setTimeout(()=>$("status").scrollIntoView({block:"start",behavior:"smooth"}),300);
