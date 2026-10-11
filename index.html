@@ -55,7 +55,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .wx .src{font-size:10.5px;color:var(--muted)}
 .wx .warn{font-size:11.5px;font-weight:700;color:var(--heat)}
 /* basemap picker */
-.bmaps{position:absolute;top:10px;right:10px;z-index:3;display:flex;flex-direction:column;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.bmaps-old{position:absolute;top:10px;right:10px;z-index:3;display:flex;flex-direction:column;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px;box-shadow:0 2px 8px rgba(0,0,0,.12)}
 .bmaps button{border:0;background:none;font-size:12px;font-weight:600;color:var(--muted);padding:5px 8px;border-radius:6px;cursor:pointer;text-align:left}
 .bmaps button[aria-pressed="true"]{background:var(--cool-soft);color:var(--cool)}
 
@@ -143,6 +143,20 @@ select{width:100%;margin-top:6px;padding:9px;border:1px solid var(--line);border
 .chip{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:4px 9px;font:600 12px var(--f-mono);cursor:pointer}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
 .chip.wide{font-family:var(--f-body)}
+.settings-bg{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:40;display:flex;align-items:flex-end;justify-content:center}
+.settings-bg[hidden]{display:none}
+.settings{background:var(--panel);width:100%;max-width:440px;max-height:88%;overflow:auto;border-radius:18px 18px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:16px;box-shadow:0 -6px 24px rgba(0,0,0,.2)}
+#app[data-layout="desktop"] .settings-bg{align-items:center}
+#app[data-layout="desktop"] .settings{border-radius:18px}
+.settings h2{display:flex;justify-content:space-between;align-items:center}
+.settings .close{border:0;background:var(--bg);border-radius:999px;width:32px;height:32px;font-size:18px;cursor:pointer;color:var(--ink)}
+.opt{display:flex;flex-direction:column;gap:8px}
+.optrow{display:flex;gap:6px;flex-wrap:wrap}
+.optrow button{flex:1;min-width:90px;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;padding:10px 8px;font-weight:600;font-size:14px;cursor:pointer}
+.optrow button[aria-pressed="true"]{border-color:var(--cool);background:var(--cool-soft);color:var(--cool)}
+.toggle{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:14px;cursor:pointer}
+.toggle input{width:20px;height:20px;accent-color:var(--cool)}
+.row.plain{grid-template-columns:1fr auto;padding-left:12px}
 .toast{position:absolute;left:50%;transform:translateX(-50%);bottom:24px;background:var(--ink);color:var(--panel);padding:8px 14px;border-radius:999px;font-size:13px;z-index:20;opacity:0;pointer-events:none;transition:opacity .2s}
 .toast.on{opacity:1}
 
@@ -153,7 +167,8 @@ select{width:100%;margin-top:6px;padding:9px;border:1px solid var(--line);border
 #app[data-layout="phone"] .sheet{position:absolute;left:0;right:0;bottom:0;border-right:0;border-radius:18px 18px 0 0;box-shadow:0 -4px 18px rgba(0,0,0,.15);height:46%;transition:height .25s ease}
 #app[data-layout="phone"] .sheet[data-state="full"]{height:88%}
 #app[data-layout="phone"] .sheet[data-state="mini"]{height:118px}
-#app[data-layout="phone"] .handle{display:flex;justify-content:center;padding:8px 0 2px;position:sticky;top:0;background:var(--panel);cursor:pointer;border:0;width:100%;z-index:2}
+#app[data-layout="phone"] .handle{display:flex;justify-content:center;padding:10px 0 8px;position:sticky;top:0;background:var(--panel);cursor:grab;border:0;width:100%;z-index:2;touch-action:none}
+#app[data-layout="phone"] .sheet.dragging{transition:none}
 #app[data-layout="phone"] .handle i{width:42px;height:5px;border-radius:3px;background:var(--line)}
 #app[data-layout="phone"] .sheet-inner{padding-top:4px}
 #app[data-layout="phone"] .bottomnav{display:grid;grid-template-columns:1fr 1fr;background:var(--panel);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:6}
@@ -161,7 +176,6 @@ select{width:100%;margin-top:6px;padding:9px;border:1px solid var(--line);border
 .bottomnav button .ico{font-size:18px;line-height:1}
 .bottomnav button[aria-pressed="true"]{color:var(--cool)}
 .bottomnav button.p[aria-pressed="true"]{color:var(--prem)}
-#app[data-layout="phone"] .bmaps{top:auto;bottom:calc(46% + 10px);flex-direction:row}
 #app[data-layout="phone"] .wx{max-width:62%}
 /* phone preview frame on a big screen */
 #app.framed{width:400px;height:min(860px,calc(100% - 32px));margin:16px auto;border-radius:30px;overflow:hidden;border:9px solid #1b1f22;box-shadow:0 12px 40px rgba(0,0,0,.25)}
@@ -178,8 +192,7 @@ body.framed-bg{background:#cfd8db}
       <button class="p" data-v="premium" aria-pressed="false" data-i18n="tabPremium">Premium</button>
     </div>
     <span class="spacer"></span>
-    <button class="iconbtn" id="layoutBtn" title="Phone / computer view"></button>
-    <button class="iconbtn" id="langBtn">中文</button>
+    <button class="iconbtn" id="settingsBtn" aria-label="Settings">⚙︎ <span data-i18n="settings">Settings</span></button>
   </header>
 
   <div class="body">
@@ -340,12 +353,25 @@ body.framed-bg{background:#cfd8db}
     <div class="mapwrap">
       <div id="map"></div>
       <div class="wx" id="wx"><span class="where">…</span></div>
-      <div class="bmaps" id="bmaps">
-        <button data-b="hk" aria-pressed="true" data-i18n="bmHK">HK Map (LandsD)</button>
-        <button data-b="topo" aria-pressed="false" data-i18n="bmTopo">Topographic</button>
-        <button data-b="hybrid" aria-pressed="false" data-i18n="bmImg">Imagery</button>
-      </div>
+
       <div class="toast" id="toast"></div>
+    </div>
+  </div>
+
+  <div class="settings-bg" id="settingsBg" hidden>
+    <div class="settings" role="dialog" aria-modal="true" aria-labelledby="setTitle">
+      <h2 id="setTitle"><span data-i18n="settings">Settings</span><button class="close" id="settingsClose" aria-label="Close">✕</button></h2>
+      <div class="opt"><span class="lbl" data-i18n="setLang">Language</span>
+        <div class="optrow" id="optLang"><button data-o="en">English</button><button data-o="zh">繁體中文</button></div></div>
+      <div class="opt"><span class="lbl" data-i18n="setView">View</span>
+        <div class="optrow" id="optView"><button data-o="auto" data-i18n="vAuto">Auto</button><button data-o="phone" data-i18n="vPhone">📱 Phone</button><button data-o="desktop" data-i18n="vDesk">💻 Computer</button></div></div>
+      <div class="opt"><span class="lbl" data-i18n="setMap">Map type</span>
+        <div class="optrow" id="bmaps"><button data-b="hk" data-i18n="bmHK">HK Map (LandsD)</button><button data-b="topo" data-i18n="bmTopo">Topographic</button><button data-b="hybrid" data-i18n="bmImg">Imagery</button></div></div>
+      <div class="opt"><span class="lbl" data-i18n="setLayers">Show on map</span>
+        <label class="toggle"><span data-i18n="pMtr">MTR lines &amp; stations</span><input type="checkbox" id="prefMtr"></label>
+        <label class="toggle"><span data-i18n="pShade">Covered walkways &amp; shade</span><input type="checkbox" id="prefShade"></label>
+        <label class="toggle"><span data-i18n="pShel">Cool shelters</span><input type="checkbox" id="prefShel"></label>
+      </div>
     </div>
   </div>
 
@@ -406,7 +432,7 @@ const T = {
   lgMtr:"MTR station",useMyLoc:"Use my current location",nearestOpt:"Nearest cool shelter",hdrNearMtr:"Nearby MTR stations",hdrNearShel:"Nearby cool shelters",
   hdrMtr:"MTR stations",hdrExits:"Station exits",hdrPlaces:"Places",hdrSearch:"Addresses & places",exit:"Exit",stCentre:"Station centre",chooseExit:"Exit:",
   exitsLoading:"Loading exits…",exitsNone:"Exit locations need an internet connection.",stSuf:" Station",exitLabel:(st,r)=>`${st} Station · Exit ${r}`,
-  linesLbl:"Lines",exitsLbl:"Exits",typeShelter:"Cool shelter",typeArea:"Neighbourhood",noSugg:"No matches yet. Keep typing or press Find.",hdrAddr:"Addresses",hdrGoogle:"Google Maps places",srcALS:"HK address lookup",srcGeo:"HK GeoInfo Map",openGmaps:"Open walking directions in Google Maps"},
+  linesLbl:"Lines",exitsLbl:"Exits",typeShelter:"Cool shelter",typeArea:"Neighbourhood",noSugg:"No matches yet. Keep typing or press Find.",hdrAddr:"Addresses",hdrGoogle:"Google Maps places",srcALS:"HK address lookup",srcGeo:"HK GeoInfo Map",openGmaps:"Open walking directions in Google Maps",settings:"Settings",setLang:"Language",setView:"View",setMap:"Map type",setLayers:"Show on map",vAuto:"Auto",vPhone:"📱 Phone",vDesk:"💻 Computer",pMtr:"MTR lines & stations",pShade:"Covered walkways & shade",pShel:"Cool shelters"},
  zh:{tabPublic:"公眾版 · 免費",tabPremium:"進階版",pubTitle:"行陰涼路線",pubHint:"輸入目的地。起點留空即使用你目前的位置。",
   startPh:"起點：你目前的位置",destPh:"目的地：最近的避暑點",pick:"在地圖上揀",go:"搵最陰涼路線",mostShaded:"最陰涼",fastest:"最快",
   shadeOnRoute:"路線上的遮蔭",otherShelters:"附近其他避暑點",lgCovered:"有蓋行人通道／天橋",lgTrees:"林蔭街道",lgShelter:"避暑點（有冷氣）",
@@ -443,7 +469,7 @@ const T = {
   lgMtr:"港鐵站",useMyLoc:"使用我目前的位置",nearestOpt:"最近的避暑點",hdrNearMtr:"附近港鐵站",hdrNearShel:"附近避暑點",
   hdrMtr:"港鐵站",hdrExits:"車站出口",hdrPlaces:"地點",hdrSearch:"地址及地點",exit:"出口",stCentre:"車站中心",chooseExit:"出口：",
   exitsLoading:"正在載入出口…",exitsNone:"需要上網才能顯示出口位置。",stSuf:"站",exitLabel:(st,r)=>`${st}站 ${r} 出口`,
-  linesLbl:"路綫",exitsLbl:"出口",typeShelter:"避暑點",typeArea:"社區",noSugg:"暫時未有結果，繼續輸入或按「搵最陰涼路線」。",hdrAddr:"地址",hdrGoogle:"Google 地圖地點",srcALS:"香港地址查詢",srcGeo:"地理資訊地圖",openGmaps:"在 Google 地圖開啟步行路線"}
+  linesLbl:"路綫",exitsLbl:"出口",typeShelter:"避暑點",typeArea:"社區",noSugg:"暫時未有結果，繼續輸入或按「搵最陰涼路線」。",hdrAddr:"地址",hdrGoogle:"Google 地圖地點",srcALS:"香港地址查詢",srcGeo:"地理資訊地圖",openGmaps:"在 Google 地圖開啟步行路線",settings:"設定",setLang:"語言",setView:"顯示模式",setMap:"地圖類型",setLayers:"地圖顯示",vAuto:"自動",vPhone:"📱 手機版",vDesk:"💻 電腦版",pMtr:"港鐵綫及車站",pShade:"有蓋通道及遮蔭",pShel:"避暑點"}
 };
 let lang = "en"; try{ lang = localStorage.getItem("coolhk-lang") || "en"; }catch(e){}
 const t = (k,...a) => { const v = T[lang][k] ?? T.en[k]; return typeof v==="function" ? v(...a) : v; };
@@ -621,7 +647,6 @@ function applyLang(){
   document.documentElement.lang = lang==="zh"?"zh-Hant-HK":"en";
   document.querySelectorAll("[data-i18n]").forEach(el=>{el.textContent=t(el.dataset.i18n)});
   document.querySelectorAll("[data-i18n-ph]").forEach(el=>{el.placeholder=t(el.dataset.i18nPh)});
-  $("langBtn").textContent = lang==="zh"?"EN":"中文";
   renderLayoutBtn();
 }
 
@@ -635,11 +660,38 @@ function applyLayout(){
   app.classList.toggle("framed",framed); document.body.classList.toggle("framed-bg",framed);
   renderLayoutBtn();
 }
-function renderLayoutBtn(){ $("layoutBtn").textContent = layoutPref==="phone"?t("layoutPhone"):layoutPref==="desktop"?t("layoutDesk"):t("layoutAuto"); }
-$("layoutBtn").onclick=()=>{layoutPref={auto:"phone",phone:"desktop",desktop:"auto"}[layoutPref];try{localStorage.setItem("coolhk-layout",layoutPref)}catch(e){};applyLayout()};
+function renderLayoutBtn(){
+  document.querySelectorAll("#optView button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.o===layoutPref));
+  document.querySelectorAll("#optLang button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.o===lang));
+}
+document.querySelectorAll("#optView button").forEach(b=>b.onclick=()=>{layoutPref=b.dataset.o;try{localStorage.setItem("coolhk-layout",layoutPref)}catch(e){};applyLayout()});
+document.querySelectorAll("#optLang button").forEach(b=>b.onclick=()=>{if(lang===b.dataset.o)return;lang=b.dataset.o;try{localStorage.setItem("coolhk-lang",lang)}catch(e){};applyLang();onLangChange()});
+// map-layer preferences (saved per device)
+let prefs={mtr:true,shade:true,shel:true}; try{Object.assign(prefs,JSON.parse(localStorage.getItem("coolhk-prefs")||"{}"))}catch(e){}
+function applyPrefs(){
+  if(!view) return;
+  if(layers.mtr) layers.mtr.visible=prefs.mtr;
+  if(layers.shelters) layers.shelters.visible=prefs.shel;
+  if(layers.shade && version==="public") layers.shade.visible=prefs.shade;
+}
+[["prefMtr","mtr"],["prefShade","shade"],["prefShel","shel"]].forEach(([id,k])=>{const el=$(id);el.checked=prefs[k];el.onchange=()=>{prefs[k]=el.checked;try{localStorage.setItem("coolhk-prefs",JSON.stringify(prefs))}catch(e){};applyPrefs()}});
+$("settingsBtn").onclick=()=>{$("settingsBg").hidden=false};
+$("settingsClose").onclick=()=>{$("settingsBg").hidden=true};
+$("settingsBg").addEventListener("click",e=>{if(e.target.id==="settingsBg")$("settingsBg").hidden=true});
 window.addEventListener("resize",applyLayout);
-$("langBtn").onclick=()=>{lang=lang==="zh"?"en":"zh";try{localStorage.setItem("coolhk-lang",lang)}catch(e){};applyLang();onLangChange()};
-$("handle").onclick=()=>{const s=$("sheet");s.dataset.state={peek:"full",full:"mini",mini:"peek"}[s.dataset.state]};
+// bottom sheet: drag (swipe) the handle up or down; it snaps to small / half / full
+(function(){
+  const sheet=$("sheet"), handle=$("handle"); let y0=0,h0=0,moved=false,dragging=false,lastY=0,lastT=0,vel=0;
+  const snaps=()=>{const H=sheet.parentElement.clientHeight;return{mini:118,peek:H*.46,full:H*.88}};
+  handle.addEventListener("pointerdown",e=>{if($("app").dataset.layout!=="phone")return;dragging=true;moved=false;y0=lastY=e.clientY;lastT=e.timeStamp;h0=sheet.getBoundingClientRect().height;sheet.classList.add("dragging");handle.setPointerCapture(e.pointerId)});
+  handle.addEventListener("pointermove",e=>{if(!dragging)return;const dy=e.clientY-y0;if(Math.abs(dy)>4)moved=true;const S=snaps();sheet.style.height=Math.max(S.mini,Math.min(S.full,h0-dy))+"px";vel=(e.clientY-lastY)/Math.max(1,e.timeStamp-lastT);lastY=e.clientY;lastT=e.timeStamp});
+  const end=e=>{if(!dragging)return;dragging=false;sheet.classList.remove("dragging");const S=snaps();const h=sheet.getBoundingClientRect().height;sheet.style.height="";
+    if(!moved){sheet.dataset.state={peek:"full",full:"mini",mini:"peek"}[sheet.dataset.state];return}
+    let st; if(vel<-0.5) st=h<S.peek?"peek":"full"; else if(vel>0.5) st=h>S.peek?"peek":"mini";
+    else st=Object.entries(S).sort((a,b)=>Math.abs(a[1]-h)-Math.abs(b[1]-h))[0][0];
+    sheet.dataset.state=st};
+  handle.addEventListener("pointerup",end); handle.addEventListener("pointercancel",end);
+})();
 const sheetTo=st=>{ if($("app").dataset.layout==="phone") $("sheet").dataset.state=st; };
 
 // =====================================================================
@@ -693,7 +745,6 @@ require(["esri/config","esri/Map","esri/WebMap","esri/views/MapView","esri/Basem
 
   const map = CONFIG.WEBMAP_ID ? new WebMap({portalItem:{id:CONFIG.WEBMAP_ID}}) : new EsriMap({basemap:makeBasemap("hk")});
   ["lst","catch","demand","areas","shade","shelters","mtr","route","exits","deploy"].forEach(k=>{layers[k]=new GraphicsLayer({id:k});});
-  layers.mtr.minScale=80000;
   map.addMany([layers.lst,layers.catch,layers.demand,layers.shade,layers.areas,layers.shelters,layers.mtr,layers.route,layers.exits,layers.deploy]);
 
   view = new MapView({container:"map",map,center:[114.18,22.30],zoom:13,
@@ -710,7 +761,7 @@ require(["esri/config","esri/Map","esri/WebMap","esri/views/MapView","esri/Basem
   reactiveUtils.when(()=>view.stationary,()=>{ if(version==="premium"&&view.center) renderWeather([view.center.latitude,view.center.longitude]); });
 
   drawShade(); drawShelters(); drawCatch(); drawMTR();
-  view.when(()=>{ show("public"); checkHKTiles(); });
+  view.when(()=>{ let b="hk"; try{b=localStorage.getItem("coolhk-basemap")||"hk"}catch(e){}; if(b!=="hk"&&!CONFIG.WEBMAP_ID) setBasemap(b); else document.querySelectorAll("#bmaps button").forEach(x=>x.setAttribute("aria-pressed",x.dataset.b==="hk")); show("public"); checkHKTiles(); });
 });
 
 function makeBasemap(id){
@@ -729,7 +780,7 @@ function checkHKTiles(){
   img.onload=()=>{done=true}; img.onerror=fail; setTimeout(fail,8000);
   img.src="https://mapapi.geodata.gov.hk/gs/api/v1.0.0/xyz/basemap/WGS84/13/6694/3575.png";
 }
-function setBasemap(id){ currentBasemap=id; if(view) view.map.basemap=makeBasemap(id);
+function setBasemap(id){ currentBasemap=id; try{localStorage.setItem("coolhk-basemap",id)}catch(e){}; if(view) view.map.basemap=makeBasemap(id);
   document.querySelectorAll("#bmaps button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.b===id)); }
 document.querySelectorAll("#bmaps button").forEach(b=>b.onclick=()=>setBasemap(b.dataset.b));
 
@@ -946,11 +997,30 @@ function refreshExitRows(){["start","dest"].forEach(f=>{const row=$(f+"Exits");i
     const x=s.exits.find(x=>x.ref===b.dataset.x); choose(field, x?exitItem(s,x):itemFor(s,"mtr"));});
 });
 
-// MTR layer: station markers (line-coloured ring) + exits of the chosen stations
+// MTR layer: each line drawn in its colour through its stations, stations as small dots on the line
+const ROUTES={
+ ISL:[["Kennedy Town","HKU","Sai Ying Pun","Sheung Wan","Central","Admiralty","Wan Chai","Causeway Bay","Tin Hau","Fortress Hill","North Point","Quarry Bay","Tai Koo","Sai Wan Ho","Shau Kei Wan","Heng Fa Chuen","Chai Wan"]],
+ TWL:[["Central","Admiralty","Tsim Sha Tsui","Jordan","Yau Ma Tei","Mong Kok","Prince Edward","Sham Shui Po","Cheung Sha Wan","Lai Chi Kok","Mei Foo","Lai King","Kwai Fong","Kwai Hing","Tai Wo Hau","Tsuen Wan"]],
+ KTL:[["Whampoa","Ho Man Tin","Yau Ma Tei","Mong Kok","Prince Edward","Shek Kip Mei","Kowloon Tong","Lok Fu","Wong Tai Sin","Diamond Hill","Choi Hung","Kowloon Bay","Ngau Tau Kok","Kwun Tong","Lam Tin","Yau Tong","Tiu Keng Leng"]],
+ TKL:[["North Point","Quarry Bay","Yau Tong","Tiu Keng Leng","Tseung Kwan O","Hang Hau","Po Lam"],["Tseung Kwan O","LOHAS Park"]],
+ SIL:[["Admiralty","Ocean Park","Wong Chuk Hang","Lei Tung","South Horizons"]],
+ TCL:[["Hong Kong","Kowloon","Olympic","Nam Cheong","Lai King","Tsing Yi","Sunny Bay","Tung Chung"]],
+ AEL:[["Hong Kong","Kowloon","Tsing Yi","Airport","AsiaWorld-Expo"]],
+ DRL:[["Sunny Bay","Disneyland Resort"]],
+ EAL:[["Admiralty","Exhibition Centre","Hung Hom","Mong Kok East","Kowloon Tong","Tai Wai","Sha Tin","Fo Tan","University","Tai Po Market","Tai Wo","Fanling","Sheung Shui","Lo Wu"],["Sheung Shui","Lok Ma Chau"],["Fo Tan","Racecourse"]],
+ TML:[["Wu Kai Sha","Ma On Shan","Heng On","Tai Shui Hang","Shek Mun","City One","Sha Tin Wai","Che Kung Temple","Tai Wai","Hin Keng","Diamond Hill","Kai Tak","Sung Wong Toi","To Kwa Wan","Ho Man Tin","Hung Hom","East Tsim Sha Tsui","Austin","Nam Cheong","Mei Foo","Tsuen Wan West","Kam Sheung Road","Yuen Long","Long Ping","Tin Shui Wai","Siu Hong","Tuen Mun"]]
+};
 function drawMTR(){
   if(!layers.mtr) return; layers.mtr.removeAll();
+  const byName=Object.fromEntries(MTR.map(s=>[s.en,s]));
+  Object.entries(ROUTES).forEach(([code,branches])=>branches.forEach(names=>{
+    const coords=names.map(n=>byName[n]).filter(Boolean).map(s=>[s.lat,s.lng]);
+    layers.mtr.add(new Graphic({geometry:pline(coords),symbol:{type:"simple-line",color:[255,255,255,.85],width:6.5}}));
+    layers.mtr.add(new Graphic({geometry:pline(coords),symbol:{type:"simple-line",color:LINES[code][2],width:4,cap:"round",join:"round"},
+      popupTemplate:{title:lang==="zh"?LINES[code][1]:LINES[code][0],content:""}}));
+  }));
   MTR.forEach(s=>layers.mtr.add(new Graphic({geometry:pt(s.lat,s.lng),
-    symbol:{type:"simple-marker",color:"#ffffff",size:10,outline:{color:LINES[s.lines[0]][2],width:3}},
+    symbol:{type:"simple-marker",color:"#ffffff",size:s.lines.length>1?9:7,outline:{color:s.lines.length>1?"#132a33":LINES[s.lines[0]][2],width:s.lines.length>1?2:1.6}},
     popupTemplate:{title:stLabel(s),content:`${t("linesLbl")}: ${lineNames(s)}${s.exits&&s.exits.length?`<br>${t("exitsLbl")}: ${s.exits.map(x=>x.ref).join(", ")}`:""}`}})));
   drawSelExits();
 }
@@ -1064,7 +1134,7 @@ function renderRoutes(zoom){
   $("shadeList").innerHTML=used.length?used.map(k=>`<li><button class="row" data-s="${k}"><span class="stripe" style="background:${shadeCol(SHADE[k].kind)}"></span><span><span class="name">${nm(SHADE[k])}</span><br><span class="sub">${shadeLabel(SHADE[k].kind)}</span></span><span class="num"></span></button></li>`).join(""):`<li class="hint">${t("noShadeList")}</li>`;
   const near=nearestShelters([startPoint.lat,startPoint.lng],4).filter(x=>x.s!==destPoint).slice(0,3);
   $("nearBox").hidden=false;
-  $("nearList").innerHTML=near.map(({s,d})=>`<li><button class="row" data-n="${SHELTERS.indexOf(s)}"><span class="stripe" style="background:var(--cool)"></span><span><span class="name">${nm(s)}</span><br><span class="sub">${lang==="zh"?TYPE[s.type]:s.type} · ${lang==="zh"?D[s.dist]:s.dist}</span></span><span class="num">~${walkMin(d).toFixed(0)} ${t("min")}</span></button></li>`).join("");
+  $("nearList").innerHTML=near.map(({s,d})=>`<li><button class="row plain" data-n="${SHELTERS.indexOf(s)}"><span><span class="name">${nm(s)}</span><br><span class="sub">${lang==="zh"?TYPE[s.type]:s.type} · ${lang==="zh"?D[s.dist]:s.dist}</span></span><span class="num">~${walkMin(d).toFixed(0)} ${t("min")}</span></button></li>`).join("");
 }
 $("tripForm").onsubmit=e=>{e.preventDefault();document.activeElement.blur();findRoute()};
 $("rcShade").onclick=()=>{if(routes.shade){chosen="shade";renderRoutes()}};
@@ -1156,6 +1226,7 @@ function show(v){
   ["lst","catch","demand","areas","deploy"].forEach(k=>layers[k].visible=!pub);
   if(pub){ layers.catch.removeAll(); if(routes.fast) renderRoutes(true); else findRoute(); }
   else { renderPremium(); }
+  applyPrefs();
   sheetTo("peek");
 }
 document.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>show(b.dataset.v));
