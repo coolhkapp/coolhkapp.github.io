@@ -469,7 +469,7 @@ const T = {
   shadeTrees:"Tree shade",shadeIndoor:"Indoor, air-conditioned",shadeCovered:"Covered from sun and rain",noShadeList:"No shaded segments on this route.",
   heatAdvice:(l,t)=>`<b>${l}</b> · ${t}°C. Walk in the shade, carry water, and rest in a cool shelter if you feel dizzy.`,
   vhot:"Very Hot Weather Warning",hot:"Hot Weather Warning",
-  wxNear:"HKO station",wxLive:"Live · HKO",wxSample:"Sample data (HKO unreachable)",wxRhHQ:"RH from HKO HQ",
+  wxNear:"HKO station",wxLive:"Live · nearest HKO station",wxSample:"Sample data (HKO unreachable)",wxRhHQ:"RH from HKO HQ",
   freeAccess:"Air-conditioned, free to enter",walk:"Walk",desert:"Cool Island Desert",nearest:"Nearest shelter",surf:"Surface temp",
   subscribed:p=>`Subscribed to ${p} (demo)`,catchNote:"Shaded rings: 5 / 10-min walk",
   deployTag:i=>i===0?"Mobile cooling unit":"Hydration station",
@@ -506,7 +506,7 @@ const T = {
   shadeTrees:"樹蔭",shadeIndoor:"室內，有冷氣",shadeCovered:"可遮太陽擋雨",noShadeList:"此路線沒有遮蔭路段。",
   heatAdvice:(l,t)=>`<b>${l}</b> · ${t}°C。請行陰涼路線、帶水，如感到暈眩請到避暑點休息。`,
   vhot:"酷熱天氣警告",hot:"炎熱天氣警告",
-  wxNear:"天文台站",wxLive:"即時 · 天文台",wxSample:"示範數據（未能連接天文台）",wxRhHQ:"濕度取自天文台總部",
+  wxNear:"天文台站",wxLive:"即時 · 最近天文台站",wxSample:"示範數據（未能連接天文台）",wxRhHQ:"濕度取自天文台總部",
   freeAccess:"有冷氣，免費進入",walk:"步行",desert:"避暑沙漠",nearest:"最近避暑點",surf:"地表溫度",
   subscribed:p=>`已訂閱${p}（示範）`,catchNote:"陰影圈：5／10 分鐘步行範圍",
   deployTag:i=>i===0?"流動降溫站":"補水站",
@@ -917,7 +917,9 @@ const sheetTo=st=>{ if($("app").dataset.layout==="phone") $("sheet").dataset.sta
 function padView(){
   if(!view) return;
   const ph=$("app").dataset.layout==="phone";
-  const bottom=ph?Math.round(Math.min($("sheet").getBoundingClientRect().height,$("sheet").parentElement.clientHeight*.5)):0;
+  // use the panel's target height (not its height mid-animation), so a route is never fitted behind the panel
+  const H=$("sheet").parentElement.clientHeight, st=$("sheet").dataset.state, target=$("sheet").classList.contains("dragging")?$("sheet").getBoundingClientRect().height:st==="mini"?118:st==="full"?H*.88:H*.46;
+  const bottom=ph?Math.round(Math.min(target,H*.5)):0;
   view.padding={top:ph?64:0,left:0,right:0,bottom};
 }
 $("sheet").addEventListener("transitionend",padView);
@@ -952,7 +954,7 @@ function renderWeather(p){
   const st=STATIONS.filter(s=>WX.temps[s.en]!=null).map(s=>({s,d:dist(wxPoint,[s.lat,s.lng])})).sort((a,b)=>a.d-b.d)[0].s;
   const temp=WX.temps[st.en]; const rhSt=STATIONS.filter(s=>WX.rh[s.en]!=null).map(s=>({s,d:dist(wxPoint,[s.lat,s.lng])})).sort((a,b)=>a.d-b.d)[0];
   const useLocalRh = rhSt && rhSt.d<6000; const rh = useLocalRh?WX.rh[rhSt.s.en]:WX.rhHQ;
-  $("wx").innerHTML=`<span class="where">🌡 ${nm(st)} · ${t("wxNear")}</span>
+  $("wx").innerHTML=`<span class="where">${nm(st)}</span>
     <span class="vals"><span class="t">${temp}°C</span><span class="rh">RH ${rh}%</span></span>
     ${WX.warn?`<span class="warn">⚠ ${t(WX.warn)}</span>`:""}
     <span class="src">${WX.live?t("wxLive"):t("wxSample")}${useLocalRh?"":" · "+t("wxRhHQ")}</span>`;
