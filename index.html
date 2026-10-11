@@ -14,12 +14,13 @@
 :root{
   --bg:#eef3f4; --panel:#ffffff; --ink:#132a33; --muted:#5b707a; --line:#d8e2e6;
   --cool:#0f7c8c; --cool-soft:#d6eef1; --shade:#1f9d6b; --tree:#6aa84f; --heat:#d9480f; --heat-soft:#fde4d6;
-  --warn:#e8a317; --ok:#2f8f5b; --sun:#9aa7ad; --prem:#7a4fbf; --prem-soft:#ece4f7;
+  --warn:#e8a317; --ok:#2f8f5b; --sun:#9aa7ad; --rshade:#2563eb; --rsun:#f08c00; --prem:#7a4fbf; --prem-soft:#ece4f7;
   --f-display:"Bricolage Grotesque","Noto Sans TC",ui-sans-serif,system-ui,sans-serif;
   --f-body:"Figtree","Noto Sans TC",ui-sans-serif,system-ui,sans-serif;
   --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{height:100%;margin:0}
 body{background:var(--bg);color:var(--ink);font:15px/1.45 var(--f-body);overflow:hidden}
 #app{height:100%;display:flex;flex-direction:column;background:var(--bg);position:relative}
@@ -78,18 +79,31 @@ h3{font:700 14px/1.25 var(--f-body);margin:0}
 .dot{width:12px;height:12px;border-radius:50%;justify-self:center;margin-top:15px}
 .trip input{width:100%;font:inherit;font-size:16px;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);min-width:0}
 .trip .vline{width:2px;height:14px;background:var(--line);justify-self:center}
+.trip .pickrow{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:6px;border:1px dashed var(--line);background:var(--panel);border-radius:8px;padding:8px;font:600 13px var(--f-body);color:var(--muted);cursor:pointer}
+.trip .pickrow svg{width:16px;height:16px}
+.trip .pickrow[aria-pressed="true"]{border:1px solid var(--heat);color:var(--heat);background:var(--heat-soft)}
 .trip .mini{border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:8px;cursor:pointer;font-size:13px;color:var(--muted);white-space:nowrap}
 .trip .mini[aria-pressed="true"]{border-color:var(--heat);color:var(--heat)}
 .routes{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .rcard{border:1px solid var(--line);border-radius:12px;padding:10px;cursor:pointer;background:var(--panel);color:var(--ink);text-align:left;display:flex;flex-direction:column;gap:5px}
-.rcard[aria-pressed="true"]{border-color:var(--shade);box-shadow:inset 0 0 0 1px var(--shade)}
+.rcard[aria-pressed="true"]{border-color:var(--rshade);box-shadow:inset 0 0 0 1px var(--rshade)}
 .rcard.fast[aria-pressed="true"]{border-color:var(--cool);box-shadow:inset 0 0 0 1px var(--cool)}
 .rcard .k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
 .rcard .v{font:600 22px/1 var(--f-mono)}
 .rcard .s{font-size:12px;color:var(--muted)}
-.bar{height:8px;border-radius:4px;background:var(--sun);overflow:hidden;display:flex}
-.bar i{display:block;background:var(--shade)}
-.status{font-size:13px;color:var(--muted)}
+.bar{height:8px;border-radius:4px;background:var(--rsun);overflow:hidden;display:flex}
+.bar i{display:block;background:var(--rshade)}
+.status{font-size:13px;color:var(--muted);scroll-margin-top:36px}
+.trip .mini.ico{width:44px;height:42px;padding:0;display:grid;place-items:center;color:var(--ink)}
+.trip .mini svg{width:20px;height:20px}
+.routes.same{grid-template-columns:1fr}
+.routes.same #rcFast{display:none}
+.about{font-size:12.5px;color:var(--muted);display:flex;flex-direction:column;gap:6px}
+.about p{margin:0}.about b{color:var(--ink);font-size:13px;margin-top:4px}
+.about ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.about a{color:var(--cool)}
+.iconbtn svg{width:15px;height:15px;vertical-align:-3px}
+.bottomnav svg{width:22px;height:22px}
 ul.list,ol.list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
 .row{display:grid;grid-template-columns:6px 1fr auto;gap:10px;align-items:center;padding:8px 10px 8px 0;border:1px solid var(--line);border-radius:10px;cursor:pointer;background:var(--panel);color:var(--ink);text-align:left;width:100%;font-size:14px}
 .row:hover{border-color:var(--cool)}
@@ -177,6 +191,7 @@ select{width:100%;margin-top:6px;padding:9px;border:1px solid var(--line);border
 .bottomnav button[aria-pressed="true"]{color:var(--cool)}
 .bottomnav button.p[aria-pressed="true"]{color:var(--prem)}
 #app[data-layout="phone"] .wx{max-width:62%}
+#app[data-layout="phone"] #pubHint{display:none}
 /* phone preview frame on a big screen */
 #app.framed{width:400px;height:min(860px,calc(100% - 32px));margin:16px auto;border-radius:30px;overflow:hidden;border:9px solid #1b1f22;box-shadow:0 12px 40px rgba(0,0,0,.25)}
 body.framed-bg{background:#cfd8db}
@@ -192,7 +207,7 @@ body.framed-bg{background:#cfd8db}
       <button class="p" data-v="premium" aria-pressed="false" data-i18n="tabPremium">Premium</button>
     </div>
     <span class="spacer"></span>
-    <button class="iconbtn" id="settingsBtn" aria-label="Settings">⚙︎ <span data-i18n="settings">Settings</span></button>
+    <button class="iconbtn" id="settingsBtn" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg> <span data-i18n="settings">Settings</span></button>
   </header>
 
   <div class="body">
@@ -204,24 +219,24 @@ body.framed-bg{background:#cfd8db}
         <section id="panel-public" style="display:flex;flex-direction:column;gap:14px">
           <div>
             <h2 data-i18n="pubTitle">Walk in the shade</h2>
-            <p class="hint" data-i18n="pubHint">Type where you're going. Leave the start empty to use your current location.</p>
+            <p class="hint" id="pubHint" data-i18n="pubHint">Type where you're going. Leave the start empty to use your current location.</p>
           </div>
           <div id="heatAlert"></div>
           <form class="trip" id="tripForm" autocomplete="off">
-            <span class="dot" style="background:var(--heat)"></span>
-            <div class="field"><input id="startIn" data-i18n-ph="startPh" placeholder="Start: your current location" role="combobox" aria-autocomplete="list" aria-controls="startSugg"><div class="sugg" id="startSugg" role="listbox" hidden></div><div class="exitrow" id="startExits"></div></div>
-            <button type="button" class="mini" id="pickBtn" aria-pressed="false" data-i18n="pick">Pick on map</button>
-            <span class="vline"></span><span></span><span></span>
-            <span class="dot" style="background:var(--cool)"></span>
-            <div class="field"><input id="destIn" data-i18n-ph="destPh" placeholder="Destination: nearest cool shelter" role="combobox" aria-autocomplete="list" aria-controls="destSugg"><div class="sugg" id="destSugg" role="listbox" hidden></div><div class="exitrow" id="destExits"></div></div>
-            <button type="button" class="mini" id="swapBtn" title="Swap">⇅</button>
+            <span class="dot" style="background:var(--heat);grid-row:1"></span>
+            <div class="field" style="grid-column:2;grid-row:1"><input id="startIn" data-i18n-ph="startPh" placeholder="Start: your current location" role="combobox" aria-autocomplete="list" aria-controls="startSugg"><div class="sugg" id="startSugg" role="listbox" hidden></div><div class="exitrow" id="startExits"></div></div>
+            <button type="button" class="mini ico" id="swapBtn" style="grid-column:3;grid-row:1/4;align-self:center" data-i18n-title="swap" title="Swap start and destination" aria-label="Swap start and destination"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 4v16M3 8l4-4 4 4M17 20V4M13 16l4 4 4-4"/></svg></button>
+            <span class="vline" style="grid-column:1;grid-row:2"></span>
+            <span class="dot" style="background:var(--cool);grid-column:1;grid-row:3"></span>
+            <div class="field" style="grid-column:2;grid-row:3"><input id="destIn" data-i18n-ph="destPh" placeholder="Destination: nearest cool shelter" role="combobox" aria-autocomplete="list" aria-controls="destSugg"><div class="sugg" id="destSugg" role="listbox" hidden></div><div class="exitrow" id="destExits"></div></div>
+            <button type="button" class="pickrow" id="pickBtn" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span data-i18n="pick">Pick start point on map</span></button>
             <button class="btn" type="submit" style="grid-column:1/-1" data-i18n="go">Find shaded route</button>
           </form>
           <div class="status" id="status"></div>
           <a class="btn ghost small" id="gmapsLink" href="#" target="_blank" rel="noopener" hidden style="text-align:center;text-decoration:none" data-i18n="openGmaps">Open walking directions in Google Maps</a>
           <div class="routes" id="routes" hidden>
             <button class="rcard" id="rcShade" aria-pressed="true">
-              <span class="k" style="color:var(--shade)" data-i18n="mostShaded">Most shaded</span>
+              <span class="k" style="color:var(--rshade)" data-i18n="mostShaded">Most shaded</span>
               <span class="v" id="shMin">–</span>
               <span class="bar"><i id="shBar"></i></span>
               <span class="s" id="shSub"></span>
@@ -242,10 +257,12 @@ body.framed-bg{background:#cfd8db}
             <ul class="list" id="nearList" style="margin-top:8px"></ul>
           </div>
           <div class="legend">
+            <span><i class="ln" style="background:var(--rshade)"></i><span data-i18n="lgRShade">Route in shade</span></span>
+            <span><i class="ln" style="background:var(--rsun)"></i><span data-i18n="lgRSun">Route in the sun</span></span>
             <span><i class="ln" style="background:var(--shade)"></i><span data-i18n="lgCovered">Covered walkway / footbridge</span></span>
             <span><i class="ln" style="background:var(--tree)"></i><span data-i18n="lgTrees">Tree-lined street</span></span>
             <span><i style="background:var(--cool)"></i><span data-i18n="lgShelter">Cool shelter (air-con)</span></span>
-            <span><i style="background:#fff;border:2px solid #E2231A;box-sizing:border-box"></i><span data-i18n="lgMtr">MTR station</span></span>
+            <span><i class="ln" style="background:#0075C2"></i><i style="background:#fff;border:2px solid #132a33;box-sizing:border-box;margin-left:-12px"></i><span data-i18n="lgMtr">MTR line &amp; station</span></span>
           </div>
         </section>
 
@@ -346,7 +363,6 @@ body.framed-bg{background:#cfd8db}
           </div>
         </section>
 
-        <p class="note" data-i18n="note">Test build with sample data. Shelter and walkway locations are approximate; population, surface temperature and demand figures are made up. Basemap: Lands Department via ArcGIS Maps SDK. Weather: Hong Kong Observatory open data.</p>
       </div>
     </aside>
 
@@ -372,12 +388,37 @@ body.framed-bg{background:#cfd8db}
         <label class="toggle"><span data-i18n="pShade">Covered walkways &amp; shade</span><input type="checkbox" id="prefShade"></label>
         <label class="toggle"><span data-i18n="pShel">Cool shelters</span><input type="checkbox" id="prefShel"></label>
       </div>
+      <div class="opt"><span class="lbl" data-i18n="setAbout">About &amp; credits</span>
+        <div class="about">
+          <p data-i18n="aboutTxt">Cool HK is a student group project for GEOG2147 Build Smart Cities with GIS (HKU). Routes are suggestions only: follow road signs and the Observatory's heat advice.</p>
+          <b data-i18n="crData">Data, maps &amp; services</b>
+          <ul>
+            <li>Basemap &amp; map labels: Lands Department, HKSAR Government — <a href="https://portal.csdi.gov.hk/" target="_blank" rel="noopener">CSDI Portal / Map API</a></li>
+            <li>Temperature, humidity &amp; heat warnings: <a href="https://data.weather.gov.hk/weatherAPI/doc/HKO_Open_Data_API_Documentation.pdf" target="_blank" rel="noopener">Hong Kong Observatory Open Data API</a></li>
+            <li>Address search: <a href="https://www.als.gov.hk/" target="_blank" rel="noopener">Address Lookup Service (ALS)</a>, Digital Policy Office</li>
+            <li>Place search: <a href="https://www.map.gov.hk/" target="_blank" rel="noopener">GeoInfo Map location search</a>, Lands Department</li>
+            <li>MTR exits &amp; station positions: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a> (ODbL), via the <a href="https://overpass-api.de/" target="_blank" rel="noopener">Overpass API</a></li>
+            <li>Walking routes: <a href="https://project-osrm.org/" target="_blank" rel="noopener">OSRM</a> hosted by <a href="https://routing.openstreetmap.de/" target="_blank" rel="noopener">FOSSGIS e.V.</a>, using OpenStreetMap data</li>
+            <li>Map engine, Topographic &amp; Imagery basemaps: <a href="https://developers.arcgis.com/javascript/latest/" target="_blank" rel="noopener">Esri ArcGIS Maps SDK for JavaScript</a> and ArcGIS Online (HKU hkugeog organisation); imagery © Esri, Maxar, Earthstar Geographics</li>
+            <li>MTR line names &amp; colours: MTR Corporation (used to identify lines only)</li>
+            <li>Walking directions hand-off: Google Maps URLs</li>
+            <li>Fonts: Bricolage Grotesque, Figtree, Noto Sans TC, JetBrains Mono, from <a href="https://fonts.google.com/" target="_blank" rel="noopener">Google Fonts</a> (SIL Open Font License)</li>
+            <li>Hosting: <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a></li>
+          </ul>
+          <b data-i18n="crCourse">Course &amp; project materials</b>
+          <ul>
+            <li>GEOG2147 Build Smart Cities with GIS, The University of Hong Kong. Project brief by Prof. Winnie Tang and Mr Kelvin Shum</li>
+            <li>Cool HK group brainstorm and project outline (team document)</li>
+          </ul>
+          <p class="note" data-i18n="note">Test build with sample data.</p>
+        </div>
+      </div>
     </div>
   </div>
 
   <nav class="bottomnav">
-    <button data-v="public" aria-pressed="true"><span class="ico">🧭</span><span data-i18n="navRoute">Shaded route</span></button>
-    <button class="p" data-v="premium" aria-pressed="false"><span class="ico">📊</span><span data-i18n="navPrem">Premium</span></button>
+    <button data-v="public" aria-pressed="true"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M8 19h8.5a3.5 3.5 0 0 0 0-7h-9a3.5 3.5 0 0 1 0-7H16"/></svg></span><span data-i18n="navRoute">Shaded route</span></button>
+    <button class="p" data-v="premium" aria-pressed="false"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 21h18M7 17V11M12 17V6M17 17v-4"/></svg></span><span data-i18n="navPrem">Premium</span></button>
   </nav>
 </div>
 
@@ -396,8 +437,8 @@ const CONFIG = {
 // LANGUAGE
 // =====================================================================
 const T = {
- en:{tabPublic:"Public · Free",tabPremium:"Premium",pubTitle:"Walk in the shade",pubHint:"Type where you're going. Leave the start empty to use your current location.",
-  startPh:"Start: your current location",destPh:"Destination: nearest cool shelter",pick:"Pick on map",go:"Find shaded route",mostShaded:"Most shaded",fastest:"Fastest",
+ en:{swap:"Swap start and destination",lgRShade:"Route in shade",lgRSun:"Route in the sun",segShade:"In the shade",segSun:"In the sun",bestRoute:"Best route (shadiest and fastest)",shelOnWay:"Air-conditioned shelter on the way",setAbout:"About & credits",crData:"Data, maps & services",crCourse:"Course & project materials",aboutTxt:"Cool HK is a student group project for GEOG2147 Build Smart Cities with GIS (HKU). Routes are suggestions only: follow road signs and the Observatory's heat advice.",sampleStartLbl:"Victoria Park (sample start)",tabPublic:"Public · Free",tabPremium:"Premium",pubTitle:"Walk in the shade",pubHint:"Type where you're going. Leave the start empty to use your current location.",
+  startPh:"My current location",destPh:"Nearest cool shelter",pick:"Pick start point on map",go:"Find shaded route",mostShaded:"Most shaded",fastest:"Fastest",
   shadeOnRoute:"Shade on this route",otherShelters:"Other cool shelters nearby",lgCovered:"Covered walkway / footbridge",lgTrees:"Tree-lined street",lgShelter:"Cool shelter (air-con)",
   premFor:"For government departments & NGOs",plansTitle:"Choose a Premium plan",plansHint:"The public app stays free. Premium plans pay for heat-vulnerability analytics and services. Prices are proposals for the demo.",
   p1Name:"Community",perYear:"/ year",p1a:"Heat Vulnerability Dashboard",p1b:"Census layers: aged 65+ and under 15",p1c:"Surface heat hotspots and walk catchments",p1d:"District filter and priority ranking",
@@ -425,16 +466,16 @@ const T = {
   shadeTrees:"Tree shade",shadeIndoor:"Indoor, air-conditioned",shadeCovered:"Covered from sun and rain",noShadeList:"No shaded segments on this route.",
   heatAdvice:(l,t)=>`<b>${l}</b> · ${t}°C. Walk in the shade, carry water, and rest in a cool shelter if you feel dizzy.`,
   vhot:"Very Hot Weather Warning",hot:"Hot Weather Warning",
-  wxNear:"Nearest station",wxLive:"Live · HKO",wxSample:"Sample data (HKO unreachable)",wxRhHQ:"RH from HKO HQ",
+  wxNear:"HKO station",wxLive:"Live · HKO",wxSample:"Sample data (HKO unreachable)",wxRhHQ:"RH from HKO HQ",
   freeAccess:"Air-conditioned, free to enter",walk:"Walk",desert:"Cool Island Desert",nearest:"Nearest shelter",surf:"Surface temp",
   subscribed:p=>`Subscribed to ${p} (demo)`,catchNote:"Shaded rings: 5 / 10-min walk",
   deployTag:i=>i===0?"Mobile cooling unit":"Hydration station",
-  lgMtr:"MTR station",useMyLoc:"Use my current location",nearestOpt:"Nearest cool shelter",hdrNearMtr:"Nearby MTR stations",hdrNearShel:"Nearby cool shelters",
+  lgMtr:"MTR line & station",useMyLoc:"Use my current location",nearestOpt:"Nearest cool shelter",hdrNearMtr:"Nearby MTR stations",hdrNearShel:"Nearby cool shelters",
   hdrMtr:"MTR stations",hdrExits:"Station exits",hdrPlaces:"Places",hdrSearch:"Addresses & places",exit:"Exit",stCentre:"Station centre",chooseExit:"Exit:",
   exitsLoading:"Loading exits…",exitsNone:"Exit locations need an internet connection.",stSuf:" Station",exitLabel:(st,r)=>`${st} Station · Exit ${r}`,
   linesLbl:"Lines",exitsLbl:"Exits",typeShelter:"Cool shelter",typeArea:"Neighbourhood",noSugg:"No matches yet. Keep typing or press Find.",hdrAddr:"Addresses",hdrGoogle:"Google Maps places",srcALS:"HK address lookup",srcGeo:"HK GeoInfo Map",openGmaps:"Open walking directions in Google Maps",settings:"Settings",setLang:"Language",setView:"View",setMap:"Map type",setLayers:"Show on map",vAuto:"Auto",vPhone:"📱 Phone",vDesk:"💻 Computer",pMtr:"MTR lines & stations",pShade:"Covered walkways & shade",pShel:"Cool shelters"},
- zh:{tabPublic:"公眾版 · 免費",tabPremium:"進階版",pubTitle:"行陰涼路線",pubHint:"輸入目的地。起點留空即使用你目前的位置。",
-  startPh:"起點：你目前的位置",destPh:"目的地：最近的避暑點",pick:"在地圖上揀",go:"搵最陰涼路線",mostShaded:"最陰涼",fastest:"最快",
+ zh:{swap:"對調起點及目的地",lgRShade:"路線：有遮蔭",lgRSun:"路線：曬太陽",segShade:"有遮蔭",segSun:"曬太陽",bestRoute:"最佳路線（最陰涼亦最快）",shelOnWay:"沿途有冷氣避暑點",setAbout:"關於及資料來源",crData:"數據、地圖及服務",crCourse:"課程及專題資料",aboutTxt:"清涼香港是香港大學 GEOG2147「以 GIS 建設智慧城市」的學生小組專題。路線只供參考，請留意路牌及天文台的酷熱天氣提示。",sampleStartLbl:"維多利亞公園（示範起點）",tabPublic:"公眾版 · 免費",tabPremium:"進階版",pubTitle:"行陰涼路線",pubHint:"輸入目的地。起點留空即使用你目前的位置。",
+  startPh:"我目前的位置",destPh:"最近的避暑點",pick:"在地圖上揀起點",go:"搵最陰涼路線",mostShaded:"最陰涼",fastest:"最快",
   shadeOnRoute:"路線上的遮蔭",otherShelters:"附近其他避暑點",lgCovered:"有蓋行人通道／天橋",lgTrees:"林蔭街道",lgShelter:"避暑點（有冷氣）",
   premFor:"適用於政府部門及非政府機構",plansTitle:"選擇進階版計劃",plansHint:"公眾版永遠免費。進階版計劃收費提供熱風險分析及服務。價錢為示範用建議。",
   p1Name:"社區版",perYear:"／年",p1a:"地區熱風險儀表板",p1b:"人口普查圖層：65歲或以上及15歲以下",p1c:"地表熱點及步行範圍",p1d:"地區篩選及優先排序",
@@ -462,11 +503,11 @@ const T = {
   shadeTrees:"樹蔭",shadeIndoor:"室內，有冷氣",shadeCovered:"可遮太陽擋雨",noShadeList:"此路線沒有遮蔭路段。",
   heatAdvice:(l,t)=>`<b>${l}</b> · ${t}°C。請行陰涼路線、帶水，如感到暈眩請到避暑點休息。`,
   vhot:"酷熱天氣警告",hot:"炎熱天氣警告",
-  wxNear:"最近氣象站",wxLive:"即時 · 天文台",wxSample:"示範數據（未能連接天文台）",wxRhHQ:"濕度取自天文台總部",
+  wxNear:"天文台站",wxLive:"即時 · 天文台",wxSample:"示範數據（未能連接天文台）",wxRhHQ:"濕度取自天文台總部",
   freeAccess:"有冷氣，免費進入",walk:"步行",desert:"避暑沙漠",nearest:"最近避暑點",surf:"地表溫度",
   subscribed:p=>`已訂閱${p}（示範）`,catchNote:"陰影圈：5／10 分鐘步行範圍",
   deployTag:i=>i===0?"流動降溫站":"補水站",
-  lgMtr:"港鐵站",useMyLoc:"使用我目前的位置",nearestOpt:"最近的避暑點",hdrNearMtr:"附近港鐵站",hdrNearShel:"附近避暑點",
+  lgMtr:"港鐵綫及車站",useMyLoc:"使用我目前的位置",nearestOpt:"最近的避暑點",hdrNearMtr:"附近港鐵站",hdrNearShel:"附近避暑點",
   hdrMtr:"港鐵站",hdrExits:"車站出口",hdrPlaces:"地點",hdrSearch:"地址及地點",exit:"出口",stCentre:"車站中心",chooseExit:"出口：",
   exitsLoading:"正在載入出口…",exitsNone:"需要上網才能顯示出口位置。",stSuf:"站",exitLabel:(st,r)=>`${st}站 ${r} 出口`,
   linesLbl:"路綫",exitsLbl:"出口",typeShelter:"避暑點",typeArea:"社區",noSugg:"暫時未有結果，繼續輸入或按「搵最陰涼路線」。",hdrAddr:"地址",hdrGoogle:"Google 地圖地點",srcALS:"香港地址查詢",srcGeo:"地理資訊地圖",openGmaps:"在 Google 地圖開啟步行路線",settings:"設定",setLang:"語言",setView:"顯示模式",setMap:"地圖類型",setLayers:"地圖顯示",vAuto:"自動",vPhone:"📱 手機版",vDesk:"💻 電腦版",pMtr:"港鐵綫及車站",pShade:"有蓋通道及遮蔭",pShel:"避暑點"}
@@ -598,6 +639,10 @@ const SAMPLE_START = {lat:22.2830,lng:114.1940,en:"Victoria Park (sample)",zh:"�
 // GEO HELPERS (pure functions)
 // =====================================================================
 const WALK=80, DETOUR=1.3;
+// Hong Kong bounds (Web Mercator metres), used to stop the map zooming out to the world
+const HK_BOX={xmin:113.82,ymin:22.13,xmax:114.45,ymax:22.58};
+const mercX=lng=>lng*20037508.34/180, mercY=lat=>Math.log(Math.tan((90+lat)*Math.PI/360))*20037508.34/Math.PI;
+const HK_MERC={xmin:mercX(HK_BOX.xmin),ymin:mercY(HK_BOX.ymin),xmax:mercX(HK_BOX.xmax),ymax:mercY(HK_BOX.ymax)};
 const LAT0=22.32, KX=111320*Math.cos(LAT0*Math.PI/180), KY=110540;
 const xy=(la,ln)=>[ln*KX,la*KY];
 const dist=(a,b)=>{const[x1,y1]=xy(a[0],a[1]),[x2,y2]=xy(b[0],b[1]);return Math.hypot(x2-x1,y2-y1)};
@@ -608,14 +653,14 @@ const walkMin=m=>m*DETOUR/WALK;
 const nearestShelters=(p,n=1)=>SHELTERS.map(s=>({s,d:dist(p,[s.lat,s.lng])})).sort((a,b)=>a.d-b.d).slice(0,n);
 const nearestStation=p=>STATIONS.map(s=>({s,d:dist(p,[s.lat,s.lng])})).sort((a,b)=>a.d-b.d)[0].s;
 function shadeStats(coords){
-  let tot=0,sh=0;const used=new Set();
+  let tot=0,sh=0;const used=new Set(),shel=new Set(),flags=[];
   for(let i=0;i<coords.length-1;i++){
     const a=coords[i],b=coords[i+1],L=dist(a,b),m=[(a[0]+b[0])/2,(a[1]+b[1])/2];tot+=L;let hit=false;
     SHADE.forEach((s,k)=>{if(lineDist(m,s.pts)<35){hit=true;used.add(k)}});
-    if(!hit&&SHELTERS.some(s=>dist(m,[s.lat,s.lng])<70))hit=true;
-    if(hit)sh+=L;
+    if(!hit){const k=SHELTERS.findIndex(s=>dist(m,[s.lat,s.lng])<70);if(k>=0){hit=true;shel.add(k)}}
+    flags.push(hit); if(hit)sh+=L;
   }
-  return{tot,sh,pct:tot?sh/tot:0,used:[...used]};
+  return{tot,sh,pct:tot?sh/tot:0,used:[...used],shel:[...shel],flags};
 }
 function shadeWaypoints(a,b){
   const AB=dist(a,b),corr=Math.max(250,AB*.35),c=[];
@@ -647,6 +692,7 @@ function applyLang(){
   document.documentElement.lang = lang==="zh"?"zh-Hant-HK":"en";
   document.querySelectorAll("[data-i18n]").forEach(el=>{el.textContent=t(el.dataset.i18n)});
   document.querySelectorAll("[data-i18n-ph]").forEach(el=>{el.placeholder=t(el.dataset.i18nPh)});
+  document.querySelectorAll("[data-i18n-title]").forEach(el=>{el.title=t(el.dataset.i18nTitle);el.setAttribute("aria-label",el.title)});
   renderLayoutBtn();
 }
 
@@ -658,7 +704,7 @@ function applyLayout(){
   app.dataset.layout=L;
   const framed = L==="phone" && wide;
   app.classList.toggle("framed",framed); document.body.classList.toggle("framed-bg",framed);
-  renderLayoutBtn();
+  renderLayoutBtn(); padView();
 }
 function renderLayoutBtn(){
   document.querySelectorAll("#optView button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.o===layoutPref));
@@ -675,10 +721,11 @@ function applyPrefs(){
   if(layers.shade && version==="public") layers.shade.visible=prefs.shade;
 }
 [["prefMtr","mtr"],["prefShade","shade"],["prefShel","shel"]].forEach(([id,k])=>{const el=$(id);el.checked=prefs[k];el.onchange=()=>{prefs[k]=el.checked;try{localStorage.setItem("coolhk-prefs",JSON.stringify(prefs))}catch(e){};applyPrefs()}});
-$("settingsBtn").onclick=()=>{$("settingsBg").hidden=false};
+$("settingsBtn").onclick=()=>{$("settingsBg").hidden=false;$("settingsClose").focus()};
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("settingsBg").hidden){$("settingsBg").hidden=true;$("settingsBtn").focus()}});
 $("settingsClose").onclick=()=>{$("settingsBg").hidden=true};
 $("settingsBg").addEventListener("click",e=>{if(e.target.id==="settingsBg")$("settingsBg").hidden=true});
-window.addEventListener("resize",applyLayout);
+window.addEventListener("resize",()=>{applyLayout();padView()});
 // bottom sheet: drag (swipe) the handle up or down; it snaps to small / half / full
 (function(){
   const sheet=$("sheet"), handle=$("handle"); let y0=0,h0=0,moved=false,dragging=false,lastY=0,lastT=0,vel=0;
@@ -692,7 +739,16 @@ window.addEventListener("resize",applyLayout);
     sheet.dataset.state=st};
   handle.addEventListener("pointerup",end); handle.addEventListener("pointercancel",end);
 })();
-const sheetTo=st=>{ if($("app").dataset.layout==="phone") $("sheet").dataset.state=st; };
+const sheetTo=st=>{ if($("app").dataset.layout==="phone") $("sheet").dataset.state=st; padView(); };
+// keep the map's working area above the bottom sheet, so routes and zoom buttons are never hidden behind it
+function padView(){
+  if(!view) return;
+  const ph=$("app").dataset.layout==="phone";
+  const bottom=ph?Math.round(Math.min($("sheet").getBoundingClientRect().height,$("sheet").parentElement.clientHeight*.5)):0;
+  view.padding={top:ph?64:0,left:0,right:0,bottom};
+}
+$("sheet").addEventListener("transitionend",padView);
+new MutationObserver(()=>setTimeout(padView,280)).observe($("sheet"),{attributes:true,attributeFilter:["data-state"]});
 
 // =====================================================================
 // WEATHER — district temperature & RH from the Hong Kong Observatory
@@ -723,7 +779,7 @@ function renderWeather(p){
   const st=STATIONS.filter(s=>WX.temps[s.en]!=null).map(s=>({s,d:dist(wxPoint,[s.lat,s.lng])})).sort((a,b)=>a.d-b.d)[0].s;
   const temp=WX.temps[st.en]; const rhSt=STATIONS.filter(s=>WX.rh[s.en]!=null).map(s=>({s,d:dist(wxPoint,[s.lat,s.lng])})).sort((a,b)=>a.d-b.d)[0];
   const useLocalRh = rhSt && rhSt.d<6000; const rh = useLocalRh?WX.rh[rhSt.s.en]:WX.rhHQ;
-  $("wx").innerHTML=`<span class="where">📍 ${nm(st)} · ${t("wxNear")}</span>
+  $("wx").innerHTML=`<span class="where">🌡 ${nm(st)} · ${t("wxNear")}</span>
     <span class="vals"><span class="t">${temp}°C</span><span class="rh">RH ${rh}%</span></span>
     ${WX.warn?`<span class="warn">⚠ ${t(WX.warn)}</span>`:""}
     <span class="src">${WX.live?t("wxLive"):t("wxSample")}${useLocalRh?"":" · "+t("wxRhHQ")}</span>`;
@@ -737,8 +793,8 @@ let view, Graphic, Circle, Basemap, WebTileLayer, layers={}, currentBasemap="hk"
 let version="public", tier=0;
 try{tier=+(localStorage.getItem("coolhk-tier")||0)}catch(e){}
 
-require(["esri/config","esri/Map","esri/WebMap","esri/views/MapView","esri/Basemap","esri/layers/WebTileLayer","esri/layers/GraphicsLayer","esri/Graphic","esri/geometry/Circle","esri/core/reactiveUtils"],
-(esriConfig,EsriMap,WebMap,MapView,_Basemap,_WebTileLayer,GraphicsLayer,_Graphic,_Circle,reactiveUtils)=>{
+require(["esri/config","esri/Map","esri/WebMap","esri/views/MapView","esri/Basemap","esri/layers/WebTileLayer","esri/layers/GraphicsLayer","esri/Graphic","esri/geometry/Circle","esri/core/reactiveUtils","esri/geometry/Extent"],
+(esriConfig,EsriMap,WebMap,MapView,_Basemap,_WebTileLayer,GraphicsLayer,_Graphic,_Circle,reactiveUtils,Extent)=>{
   Graphic=_Graphic; Circle=_Circle; Basemap=_Basemap; WebTileLayer=_WebTileLayer;
   esriConfig.portalUrl = CONFIG.PORTAL_URL;
   if(CONFIG.ARCGIS_API_KEY) esriConfig.apiKey = CONFIG.ARCGIS_API_KEY;
@@ -748,10 +804,17 @@ require(["esri/config","esri/Map","esri/WebMap","esri/views/MapView","esri/Basem
   map.addMany([layers.lst,layers.catch,layers.demand,layers.shade,layers.areas,layers.shelters,layers.mtr,layers.route,layers.exits,layers.deploy]);
 
   view = new MapView({container:"map",map,center:[114.18,22.30],zoom:13,
-    constraints:{minZoom:10,maxZoom:19,snapToZoom:false},
+    constraints:{maxZoom:19,snapToZoom:false,rotationEnabled:false,geometry:new Extent({...HK_MERC,spatialReference:{wkid:3857}})},
     popup:{dockEnabled:false,dockOptions:{buttonEnabled:false}}});
   view.ui.move("zoom","bottom-right");
-  view.ui.remove("attribution"); // keep Lands Department credit in the panel note instead (small screens)
+  // never zoom out past the whole of Hong Kong: the smallest scale is the one that just fits the territory
+  const fitHK=()=>{ if(!view.width||!view.height) return; const p=view.padding||{};
+    const w=Math.max(120,view.width-(p.left||0)-(p.right||0)), h=Math.max(120,view.height-(p.top||0)-(p.bottom||0));
+    const res=Math.max((HK_MERC.xmax-HK_MERC.xmin)/w,(HK_MERC.ymax-HK_MERC.ymin)/h);
+    view.constraints.minScale=res*96*39.37; };
+  reactiveUtils.watch(()=>[view.width,view.height,view.padding&&view.padding.bottom],fitHK,{initial:true});
+  // MTR lines are drawn station-to-station, so fade them at street level where they would cover the walking route
+  reactiveUtils.watch(()=>view.zoom,z=>{ if(layers.mtr) layers.mtr.opacity=z>=16?.3:z>=15?.6:1; });
 
   view.on("click",e=>{
     if(picking){ e.stopPropagation(); picking=false; $("pickBtn").setAttribute("aria-pressed","false");
@@ -761,7 +824,7 @@ require(["esri/config","esri/Map","esri/WebMap","esri/views/MapView","esri/Basem
   reactiveUtils.when(()=>view.stationary,()=>{ if(version==="premium"&&view.center) renderWeather([view.center.latitude,view.center.longitude]); });
 
   drawShade(); drawShelters(); drawCatch(); drawMTR();
-  view.when(()=>{ let b="hk"; try{b=localStorage.getItem("coolhk-basemap")||"hk"}catch(e){}; if(b!=="hk"&&!CONFIG.WEBMAP_ID) setBasemap(b); else document.querySelectorAll("#bmaps button").forEach(x=>x.setAttribute("aria-pressed",x.dataset.b==="hk")); show("public"); checkHKTiles(); });
+  view.when(()=>{ padView(); let b="hk"; try{b=localStorage.getItem("coolhk-basemap")||"hk"}catch(e){}; if(b!=="hk"&&!CONFIG.WEBMAP_ID) setBasemap(b); else document.querySelectorAll("#bmaps button").forEach(x=>x.setAttribute("aria-pressed",x.dataset.b==="hk")); show("public"); checkHKTiles(); });
 });
 
 function makeBasemap(id){
@@ -1060,7 +1123,8 @@ async function resolvePlace(q){
 function currentLocation(){
   return new Promise(res=>{
     if(!navigator.geolocation) return res(null);
-    navigator.geolocation.getCurrentPosition(p=>res({lat:p.coords.latitude,lng:p.coords.longitude,en:"My location",zh:"我的位置"}),()=>res(null),{timeout:8000,maximumAge:60000});
+    const tm=setTimeout(()=>res(null),10000); // also covers an unanswered permission prompt
+    navigator.geolocation.getCurrentPosition(p=>{clearTimeout(tm);res({lat:p.coords.latitude,lng:p.coords.longitude,en:"My location",zh:"我的位置"})},()=>{clearTimeout(tm);res(null)},{timeout:8000,maximumAge:60000});
   });
 }
 async function pointFrom(field){
@@ -1077,7 +1141,7 @@ async function findRoute(){
   st.textContent=t("searching");
   // start: typed / chosen place, otherwise current location
   if($("startIn").value.trim()){ const p=await pointFrom("start"); if(!p){st.textContent=t("notFound",$("startIn").value);return} startPoint=p; }
-  else { st.textContent=t("locating"); const p=await currentLocation(); if(p) startPoint=p; else { startPoint=SAMPLE_START; toast(t("noGeo")); } }
+  else { st.textContent=t("locating"); const p=await currentLocation(); if(p) startPoint=p; else { startPoint=SAMPLE_START; const si=$("startIn"); si.value=t("sampleStartLbl"); si._sel={...SAMPLE_START,label:si.value}; toast(t("noGeo")); } }
   // destination: typed / chosen place, otherwise nearest cool shelter
   if($("destIn").value.trim()){ const p=await pointFrom("dest"); if(!p){st.textContent=t("notFound",$("destIn").value);return} destPoint=p; }
   else destPoint=nearestShelters([startPoint.lat,startPoint.lng])[0].s;
@@ -1106,7 +1170,8 @@ async function plan(id){
   fast.stats=shadeStats(fast.coords); let sh=shadeR; if(sh) sh.stats=shadeStats(sh.coords);
   const sun=r=>r.meters*(1-r.stats.pct);
   if(!sh||sun(fast)-sun(sh)<WALK||sh.meters>fast.meters*1.5) sh=fast;
-  routes={fast,shade:sh}; chosen="shade"; renderRoutes(true); sheetTo("peek");
+  routes={fast,shade:sh}; chosen="shade"; sheetTo("peek"); renderRoutes(true);
+  if($("app").dataset.layout==="phone") setTimeout(()=>$("status").scrollIntoView({block:"start",behavior:"smooth"}),300);
 }
 function fmtCard(r,p){
   const min=r.meters/WALK, sunMin=r.meters*(1-r.stats.pct)/WALK;
@@ -1114,13 +1179,24 @@ function fmtCard(r,p){
   $(p+"Bar").style.width=`${Math.round(r.stats.pct*100)}%`;
   $(p+"Sub").textContent=`${Math.round(r.stats.pct*100)}% ${t("shaded")} · ${sunMin.toFixed(0)} ${t("inSun")}`;
 }
+function runs(coords,flags){
+  const out=[];let cur=null;
+  for(let i=0;i<flags.length;i++){ if(!cur||cur.f!==flags[i]){ cur={f:flags[i],pts:[coords[i]],m:0}; out.push(cur); } cur.pts.push(coords[i+1]); cur.m+=dist(coords[i],coords[i+1]); }
+  return out;
+}
 function renderRoutes(zoom){
   if(!view) return; layers.route.removeAll();
   const {fast,shade}=routes, main=routes[chosen], other=chosen==="shade"?fast:shade;
   if(other!==main) layers.route.add(new Graphic({geometry:pline(other.coords),symbol:{type:"simple-line",color:css("--sun"),width:4,style:"dash"}}));
-  layers.route.add(new Graphic({geometry:pline(main.coords),symbol:{type:"simple-line",color:[255,255,255,.9],width:9}}));
-  const g=new Graphic({geometry:pline(main.coords),symbol:{type:"simple-line",color:chosen==="shade"?css("--shade"):css("--cool"),width:6}});
+  const g=new Graphic({geometry:pline(main.coords),symbol:{type:"simple-line",color:[255,255,255,.95],width:10,cap:"round",join:"round"}});
   layers.route.add(g);
+  // colour each stretch: blue = in shade (covered walkway, trees or past a cool shelter), orange = in the sun
+  runs(main.coords,main.stats.flags).forEach(r=>layers.route.add(new Graphic({geometry:pline(r.pts),
+    symbol:{type:"simple-line",color:r.f?css("--rshade"):css("--rsun"),width:6,cap:"round",join:"round"},
+    attributes:{m:Math.round(r.m)},popupTemplate:{title:r.f?t("segShade"):t("segSun"),content:`~${Math.max(1,Math.round(r.m/WALK))} ${t("min")} · ${Math.round(r.m)} m`}})));
+  // dashed links where the walking network starts / ends away from the exact points
+  [[[startPoint.lat,startPoint.lng],main.coords[0]],[main.coords.at(-1),[destPoint.lat,destPoint.lng]]].forEach(([a,b])=>{
+    if(dist(a,b)>8) layers.route.add(new Graphic({geometry:pline([a,b]),symbol:{type:"simple-line",color:css("--muted"),width:2.5,style:"short-dot"}}))});
   layers.route.add(dot(startPoint.lat,startPoint.lng,css("--heat"),16,{title:t("start"),content:nm(startPoint)}));
   layers.route.add(dot(destPoint.lat,destPoint.lng,css("--cool"),18,{title:nm(destPoint),content:destPoint.type?t("freeAccess"):""},"#132a33"));
   if(zoom) view.goTo({target:g.geometry.extent.clone().expand(1.6)}).catch(()=>{});
@@ -1128,10 +1204,12 @@ function renderRoutes(zoom){
   const gl=$("gmapsLink"); gl.hidden=false;
   gl.href=`https://www.google.com/maps/dir/?api=1&origin=${startPoint.lat},${startPoint.lng}&destination=${destPoint.lat},${destPoint.lng}&travelmode=walking`;
   $("rcShade").setAttribute("aria-pressed",chosen==="shade"); $("rcFast").setAttribute("aria-pressed",chosen==="fast");
-  const same=shade===fast, extra=(shade.meters-fast.meters)/WALK, saved=(fast.meters*(1-fast.stats.pct)-shade.meters*(1-shade.stats.pct))/WALK;
-  $("status").textContent=(same?(fast.stats.used.length?t("sameRoute"):t("noShade")):t("shadeBetter",Math.max(0,extra).toFixed(0),Math.max(0,saved).toFixed(0)))+(main.live?"":t("offline"));
-  const used=main.stats.used; $("shadeBox").hidden=false;
-  $("shadeList").innerHTML=used.length?used.map(k=>`<li><button class="row" data-s="${k}"><span class="stripe" style="background:${shadeCol(SHADE[k].kind)}"></span><span><span class="name">${nm(SHADE[k])}</span><br><span class="sub">${shadeLabel(SHADE[k].kind)}</span></span><span class="num"></span></button></li>`).join(""):`<li class="hint">${t("noShadeList")}</li>`;
+  const same=shade===fast; $("routes").classList.toggle("same",same);
+  $("rcShade").querySelector(".k").textContent=same?t("bestRoute"):t("mostShaded");
+  const extra=(shade.meters-fast.meters)/WALK, saved=(fast.meters*(1-fast.stats.pct)-shade.meters*(1-shade.stats.pct))/WALK;
+  $("status").textContent=(same?(fast.stats.pct>0?t("sameRoute"):t("noShade")):t("shadeBetter",Math.max(0,extra).toFixed(0),Math.max(0,saved).toFixed(0)))+(main.live?"":t("offline"));
+  const used=main.stats.used, shel=(main.stats.shel||[]).filter(k=>dist([SHELTERS[k].lat,SHELTERS[k].lng],[destPoint.lat,destPoint.lng])>30); $("shadeBox").hidden=false;
+  $("shadeList").innerHTML=(used.length||shel.length)?shel.map(k=>`<li><button class="row" data-c="${k}"><span class="stripe" style="background:var(--cool)"></span><span><span class="name">${nm(SHELTERS[k])}</span><br><span class="sub">${t("shelOnWay")}</span></span><span class="num"></span></button></li>`).join("")+used.map(k=>`<li><button class="row" data-s="${k}"><span class="stripe" style="background:${shadeCol(SHADE[k].kind)}"></span><span><span class="name">${nm(SHADE[k])}</span><br><span class="sub">${shadeLabel(SHADE[k].kind)}</span></span><span class="num"></span></button></li>`).join(""):`<li class="hint">${t("noShadeList")}</li>`;
   const near=nearestShelters([startPoint.lat,startPoint.lng],4).filter(x=>x.s!==destPoint).slice(0,3);
   $("nearBox").hidden=false;
   $("nearList").innerHTML=near.map(({s,d})=>`<li><button class="row plain" data-n="${SHELTERS.indexOf(s)}"><span><span class="name">${nm(s)}</span><br><span class="sub">${lang==="zh"?TYPE[s.type]:s.type} · ${lang==="zh"?D[s.dist]:s.dist}</span></span><span class="num">~${walkMin(d).toFixed(0)} ${t("min")}</span></button></li>`).join("");
@@ -1142,7 +1220,9 @@ $("rcFast").onclick=()=>{if(routes.fast){chosen="fast";renderRoutes()}};
 $("pickBtn").onclick=()=>{picking=!picking;$("pickBtn").setAttribute("aria-pressed",picking);if(picking){toast(t("pickNow"));sheetTo("mini")}};
 $("swapBtn").onclick=()=>{const A=$("startIn"),B=$("destIn");[A.value,B.value]=[B.value,A.value];[A._sel,B._sel]=[B._sel,A._sel];startPoint=null;
   [["start",A],["dest",B]].forEach(([f,i])=>renderExitRow(f,i._sel&&(i._sel.kind==="mtr"||i._sel.kind==="exit")?i._sel.obj:null,i._sel&&i._sel.kind==="exit"?i._sel.ref:null))};
-$("shadeList").addEventListener("click",e=>{const b=e.target.closest(".row");if(!b||!view)return;const s=SHADE[b.dataset.s];view.goTo({target:new Graphic({geometry:pline(s.pts)}).geometry.extent.clone().expand(3)}).catch(()=>{});sheetTo("peek")});
+$("shadeList").addEventListener("click",e=>{const b=e.target.closest(".row");if(!b||!view)return;
+  if(b.dataset.c!=null){const c=SHELTERS[b.dataset.c];view.goTo({center:[c.lng,c.lat],zoom:17}).catch(()=>{});sheetTo("peek");return}
+  const s=SHADE[b.dataset.s];view.goTo({target:new Graphic({geometry:pline(s.pts)}).geometry.extent.clone().expand(3)}).catch(()=>{});sheetTo("peek")});
 $("nearList").addEventListener("click",e=>{const b=e.target.closest(".row");if(!b)return;const s=SHELTERS[b.dataset.n];choose("dest",itemFor(s,"shelter"));findRoute()});
 
 // =====================================================================
@@ -1224,12 +1304,16 @@ function show(v){
   const pub=v==="public";
   layers.route.visible=pub; layers.shade.visible=pub; layers.shelters.visible=true;
   ["lst","catch","demand","areas","deploy"].forEach(k=>layers[k].visible=!pub);
-  if(pub){ layers.catch.removeAll(); if(routes.fast) renderRoutes(true); else findRoute(); }
+  if(pub){ layers.catch.removeAll(); if(routes.fast) renderRoutes(true); else autoRoute(); }
   else { renderPremium(); }
   applyPrefs();
   sheetTo("peek");
 }
 document.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>show(b.dataset.v));
+// route automatically on first open only if location access was already allowed (no surprise permission prompt)
+let autoTried=false;
+async function autoRoute(){ if(autoTried) return; autoTried=true;
+  try{ const s=await navigator.permissions.query({name:"geolocation"}); if(s.state==="granted") findRoute(); }catch(e){} }
 
 // =====================================================================
 // START
