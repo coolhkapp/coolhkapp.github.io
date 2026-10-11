@@ -94,6 +94,9 @@ h3{font:700 14px/1.25 var(--f-body);margin:0}
 .bar{height:8px;border-radius:4px;background:var(--rsun);overflow:hidden;display:flex}
 .bar i{display:block;background:var(--rshade)}
 .status{font-size:13px;color:var(--muted);scroll-margin-top:36px}
+.trip input{scroll-margin-top:60px;padding-right:36px}
+.field .clr{position:absolute;right:4px;top:6px;width:32px;height:32px;border:0;border-radius:50%;background:transparent;color:var(--muted);font-size:20px;line-height:1;cursor:pointer}
+.field .clr:hover{background:var(--line)}
 .trip .mini.ico{width:44px;height:42px;padding:0;display:grid;place-items:center;color:var(--ink)}
 .trip .mini svg{width:20px;height:20px}
 .routes.same{grid-template-columns:1fr}
@@ -162,7 +165,7 @@ select{width:100%;margin-top:6px;padding:9px;border:1px solid var(--line);border
 .settings{background:var(--panel);width:100%;max-width:440px;max-height:88%;overflow:auto;border-radius:18px 18px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:16px;box-shadow:0 -6px 24px rgba(0,0,0,.2)}
 #app[data-layout="desktop"] .settings-bg{align-items:center}
 #app[data-layout="desktop"] .settings{border-radius:18px}
-.settings h2{display:flex;justify-content:space-between;align-items:center}
+.settings h2{display:flex;justify-content:space-between;align-items:center;position:sticky;top:-18px;background:var(--panel);z-index:2;margin:-18px -18px 0;padding:14px 18px 10px}
 .settings .close{border:0;background:var(--bg);border-radius:999px;width:32px;height:32px;font-size:18px;cursor:pointer;color:var(--ink)}
 .opt{display:flex;flex-direction:column;gap:8px}
 .optrow{display:flex;gap:6px;flex-wrap:wrap}
@@ -171,9 +174,19 @@ select{width:100%;margin-top:6px;padding:9px;border:1px solid var(--line);border
 .toggle{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:14px;cursor:pointer}
 .toggle input{width:20px;height:20px;accent-color:var(--cool)}
 .row.plain{grid-template-columns:1fr auto;padding-left:12px}
+#routeLegend:not(.has-route) .rl{display:none}
 .row .band{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:1px}
 .toast{position:absolute;left:50%;transform:translateX(-50%);bottom:24px;background:var(--ink);color:var(--panel);padding:8px 14px;border-radius:999px;font-size:13px;z-index:20;opacity:0;pointer-events:none;transition:opacity .2s}
 .toast.on{opacity:1}
+.pickbar{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:6;display:flex;align-items:center;gap:10px;background:var(--ink);color:var(--panel);border-radius:999px;padding:6px 6px 6px 14px;font-size:13px;font-weight:600;box-shadow:0 4px 14px rgba(0,0,0,.25);white-space:nowrap}
+.pickbar button{border:0;border-radius:999px;background:var(--panel);color:var(--ink);font-weight:700;font-size:13px;padding:6px 12px;cursor:pointer}
+#map.picking .esri-view-surface{cursor:crosshair!important}
+.maploading{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);z-index:3;display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-size:13px;color:var(--muted);box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.maploading[hidden]{display:none}
+.maploading i{width:14px;height:14px;border-radius:50%;border:2px solid var(--line);border-top-color:var(--cool);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#app[data-layout="phone"] .toast{bottom:calc(48% + 8px);max-width:86%;white-space:normal;text-align:center}
+#app[data-layout="phone"] .pickbar{top:auto;bottom:140px}
 
 /* ---------- PHONE LAYOUT ---------- */
 #app[data-layout="phone"] .switch,#app[data-layout="phone"] .layout-label{display:none}
@@ -252,8 +265,8 @@ body.framed-bg{background:#cfd8db}
             </button>
           </div>
           <div class="legend" id="routeLegend">
-            <span><i class="ln" style="background:var(--rshade)"></i><span data-i18n="lgRShade">Route in shade</span></span>
-            <span><i class="ln" style="background:var(--rsun)"></i><span data-i18n="lgRSun">Route in the sun</span></span>
+            <span class="rl"><i class="ln" style="background:var(--rshade)"></i><span data-i18n="lgRShade">Route in shade</span></span>
+            <span class="rl"><i class="ln" style="background:var(--rsun)"></i><span data-i18n="lgRSun">Route in the sun</span></span>
             <span><i class="ln" style="background:var(--shade)"></i><span data-i18n="lgCovered">Covered walkway / footbridge</span></span>
             <span><i class="ln" style="background:var(--tree)"></i><span data-i18n="lgTrees">Tree-lined street</span></span>
             <span><i class="ln" style="background:repeating-linear-gradient(90deg,var(--cool) 0 4px,transparent 4px 7px)"></i><span data-i18n="lgIndoor">Subway / indoor / mall</span></span>
@@ -375,6 +388,8 @@ body.framed-bg{background:#cfd8db}
       <div class="wx" id="wx"><span class="where">…</span></div>
 
       <div class="toast" id="toast"></div>
+      <div class="pickbar" id="pickBar" hidden><span data-i18n="pickNow">Tap the map to set your start point.</span><button type="button" id="pickCancel" data-i18n="cancel">Cancel</button></div>
+      <div class="maploading" id="mapLoading"><i></i><span data-i18n="loadingMap">Loading map…</span></div>
     </div>
   </div>
 
@@ -384,9 +399,9 @@ body.framed-bg{background:#cfd8db}
       <div class="opt"><span class="lbl" data-i18n="setLang">Language</span>
         <div class="optrow" id="optLang"><button data-o="en">English</button><button data-o="zh">繁體中文</button></div></div>
       <div class="opt"><span class="lbl" data-i18n="setView">View</span>
-        <div class="optrow" id="optView"><button data-o="auto" data-i18n="vAuto">Auto</button><button data-o="phone" data-i18n="vPhone">📱 Phone</button><button data-o="desktop" data-i18n="vDesk">💻 Computer</button></div></div>
+        <div class="optrow" id="optView"><button data-o="auto" data-i18n="vAuto">Auto</button><button data-o="phone" data-i18n="vPhone">Phone</button><button data-o="desktop" data-i18n="vDesk">Computer</button></div></div>
       <div class="opt"><span class="lbl" data-i18n="setMap">Map type</span>
-        <div class="optrow" id="bmaps"><button data-b="hk" data-i18n="bmHK">HK Map (LandsD)</button><button data-b="topo" data-i18n="bmTopo">Topographic</button><button data-b="hybrid" data-i18n="bmImg">Imagery</button></div></div>
+        <div class="optrow" id="bmaps"><button data-b="hk" data-i18n="bmHK">HK Map</button><button data-b="topo" data-i18n="bmTopo">Topographic</button><button data-b="hybrid" data-i18n="bmImg">Imagery</button></div></div>
       <div class="opt"><span class="lbl" data-i18n="setLayers">Show on map</span>
         <label class="toggle"><span data-i18n="pMtr">MTR lines &amp; stations</span><input type="checkbox" id="prefMtr"></label>
         <label class="toggle"><span data-i18n="pShade">Covered walkways &amp; shade</span><input type="checkbox" id="prefShade"></label>
@@ -443,7 +458,7 @@ const CONFIG = {
 // LANGUAGE
 // =====================================================================
 const T = {
- en:{rhLbl:"RH",nearStart:"Cool shelters near your start",kC:"Covered walkway",kB:"Footbridge (usually covered)",kU:"Subway / underpass",kI:"Indoor corridor",kT:"Tree-lined street",kM:"Shopping mall (indoor, air-con)",kUnnamed:"Unnamed section",lgIndoor:"Subway / indoor / mall",loadingShade:"Loading covered walkways and malls…",routingShade:"Comparing routes through footbridges, subways and malls…",shadeSample:" Real shade data could not load, so sample walkways were used.",swap:"Swap start and destination",lgRShade:"Route in shade",lgRSun:"Route in the sun",segShade:"In the shade",segSun:"In the sun",bestRoute:"Best route (shadiest and fastest)",shelOnWay:"Air-conditioned shelter on the way",setAbout:"About & credits",crData:"Data, maps & services",crCourse:"Course & project materials",aboutTxt:"Cool HK is a student group project for GEOG2147 Build Smart Cities with GIS (HKU). Routes are suggestions only: follow road signs and the Observatory's heat advice.",sampleStartLbl:"Victoria Park (sample start)",tabPublic:"Public · Free",tabPremium:"Premium",pubTitle:"Walk in the shade",pubHint:"Type where you're going. Leave the start empty to use your current location.",
+ en:{finding:"Finding route…",cancel:"Cancel",pinned:"Pinned point on map",loadingMap:"Loading map…",clear:"Clear",rhLbl:"RH",nearStart:"Cool shelters near your start",kC:"Covered walkway",kB:"Footbridge (usually covered)",kU:"Subway / underpass",kI:"Indoor corridor",kT:"Tree-lined street",kM:"Shopping mall (indoor, air-con)",kUnnamed:"Unnamed section",lgIndoor:"Subway / indoor / mall",loadingShade:"Loading covered walkways and malls…",routingShade:"Comparing routes through footbridges, subways and malls…",shadeSample:" Real shade data could not load, so sample walkways were used.",swap:"Swap start and destination",lgRShade:"Route in shade",lgRSun:"Route in the sun",segShade:"In the shade",segSun:"In the sun",bestRoute:"Best route (shadiest and fastest)",shelOnWay:"Air-conditioned shelter on the way",setAbout:"About & credits",crData:"Data, maps & services",crCourse:"Course & project materials",aboutTxt:"Cool HK is a student group project for GEOG2147 Build Smart Cities with GIS (HKU). Routes are suggestions only: follow road signs and the Observatory's heat advice.",sampleStartLbl:"Victoria Park (sample start)",tabPublic:"Public · Free",tabPremium:"Premium",pubTitle:"Walk in the shade",pubHint:"Type where you're going. Leave the start empty to use your current location.",
   startPh:"My current location",destPh:"Nearest cool shelter",pick:"Pick start point on map",go:"Find shaded route",mostShaded:"Most shaded",fastest:"Fastest",
   shadeOnRoute:"Shade on this route",otherShelters:"Other cool shelters nearby",lgCovered:"Covered walkway / footbridge",lgTrees:"Tree-lined street",lgShelter:"Cool shelter (air-con)",
   premFor:"For government departments & NGOs",plansTitle:"Choose a Premium plan",plansHint:"The public app stays free. Premium plans pay for heat-vulnerability analytics and services. Prices are proposals for the demo.",
@@ -454,7 +469,7 @@ const T = {
   stShel:"cool shelters",stOut:"at-risk people outside 10 min",stDes:"desert areas",layers:"Map layers",lyCatch:"5 / 10-min walk catchments",lyLst:"Surface heat hotspots (Landsat)",lyShade:"Covered walkways",lyDemand:"Public app demand (anonymised)",
   lgDesert:"> 10 min (desert)",deployTitle:"Where to deploy this week",rankTitle:"All neighbourhoods by priority",rankHint:"Score = at-risk people × walking minutes × surface heat. Tap to zoom.",
   note:"Test build. Shade on routes uses real covered walkways, footbridges, subways, malls and tree rows from OpenStreetMap, which may be incomplete. The cool shelter list is approximate, and Premium population, surface temperature and demand figures are sample data.",
-  bmHK:"HK Map (LandsD)",bmTopo:"Topographic",bmImg:"Imagery",navRoute:"Shaded route",navPrem:"Premium",
+  bmHK:"HK Map",bmTopo:"Topographic",bmImg:"Imagery",navRoute:"Shaded route",navPrem:"Premium",
   layoutAuto:"Auto view",layoutPhone:"📱 Phone view",layoutDesk:"💻 Computer view",
   allDistricts:"All districts",planCommunity:"Community plan",planPro:"Government Pro plan",
   proOnly:"Government Pro feature",upgradeMsg:"Upgrade to Government Pro to see where to deploy cooling units, view public demand and export reports.",upgrade:"Upgrade to Pro (demo)",
@@ -479,8 +494,8 @@ const T = {
   lgMtr:"MTR line & station",useMyLoc:"Use my current location",nearestOpt:"Nearest cool shelter",hdrNearMtr:"Nearby MTR stations",hdrNearShel:"Nearby cool shelters",
   hdrMtr:"MTR stations",hdrExits:"Station exits",hdrPlaces:"Places",hdrSearch:"Addresses & places",exit:"Exit",stCentre:"Station centre",chooseExit:"Exit:",
   exitsLoading:"Loading exits…",exitsNone:"Exit locations need an internet connection.",stSuf:" Station",exitLabel:(st,r)=>`${st} Station · Exit ${r}`,
-  linesLbl:"Lines",exitsLbl:"Exits",typeShelter:"Cool shelter",typeArea:"Neighbourhood",noSugg:"No matches yet. Keep typing or press Find.",hdrAddr:"Addresses",hdrGoogle:"Google Maps places",srcALS:"Address",srcGeo:"HK GeoInfo Map",openGmaps:"Open walking directions in Google Maps",settings:"Settings",setLang:"Language",setView:"View",setMap:"Map type",setLayers:"Show on map",vAuto:"Auto",vPhone:"📱 Phone",vDesk:"💻 Computer",pMtr:"MTR lines & stations",pShade:"Covered walkways & shade",pShel:"Cool shelters"},
- zh:{rhLbl:"濕度",nearStart:"起點附近的避暑點",kC:"有蓋行人路",kB:"行人天橋（多數有蓋）",kU:"行人隧道／地下通道",kI:"室內通道",kT:"林蔭街道",kM:"商場（室內有冷氣）",kUnnamed:"未命名路段",lgIndoor:"隧道／室內／商場",loadingShade:"正在載入有蓋通道及商場資料…",routingShade:"正在比較經天橋、隧道及商場的路線…",shadeSample:" 未能載入真實遮蔭數據，暫用示範通道。",swap:"對調起點及目的地",lgRShade:"路線：有遮蔭",lgRSun:"路線：曬太陽",segShade:"有遮蔭",segSun:"曬太陽",bestRoute:"最佳路線（最陰涼亦最快）",shelOnWay:"沿途有冷氣避暑點",setAbout:"關於及資料來源",crData:"數據、地圖及服務",crCourse:"課程及專題資料",aboutTxt:"清涼香港是香港大學 GEOG2147「以 GIS 建設智慧城市」的學生小組專題。路線只供參考，請留意路牌及天文台的酷熱天氣提示。",sampleStartLbl:"維多利亞公園（示範起點）",tabPublic:"公眾版 · 免費",tabPremium:"進階版",pubTitle:"行陰涼路線",pubHint:"輸入目的地。起點留空即使用你目前的位置。",
+  linesLbl:"Lines",exitsLbl:"Exits",typeShelter:"Cool shelter",typeArea:"Neighbourhood",noSugg:"No matches yet. Keep typing or press Find.",hdrAddr:"Addresses",hdrGoogle:"Google Maps places",srcALS:"Address",srcGeo:"HK GeoInfo Map",openGmaps:"Open walking directions in Google Maps",settings:"Settings",setLang:"Language",setView:"View",setMap:"Map type",setLayers:"Show on map",vAuto:"Auto",vPhone:"Phone",vDesk:"Computer",pMtr:"MTR lines & stations",pShade:"Covered walkways & shade",pShel:"Cool shelters"},
+ zh:{finding:"搜尋路線中…",cancel:"取消",pinned:"地圖上選取的位置",loadingMap:"地圖載入中…",clear:"清除",rhLbl:"濕度",nearStart:"起點附近的避暑點",kC:"有蓋行人路",kB:"行人天橋（多數有蓋）",kU:"行人隧道／地下通道",kI:"室內通道",kT:"林蔭街道",kM:"商場（室內有冷氣）",kUnnamed:"未命名路段",lgIndoor:"隧道／室內／商場",loadingShade:"正在載入有蓋通道及商場資料…",routingShade:"正在比較經天橋、隧道及商場的路線…",shadeSample:" 未能載入真實遮蔭數據，暫用示範通道。",swap:"對調起點及目的地",lgRShade:"路線：有遮蔭",lgRSun:"路線：曬太陽",segShade:"有遮蔭",segSun:"曬太陽",bestRoute:"最佳路線（最陰涼亦最快）",shelOnWay:"沿途有冷氣避暑點",setAbout:"關於及資料來源",crData:"數據、地圖及服務",crCourse:"課程及專題資料",aboutTxt:"清涼香港是香港大學 GEOG2147「以 GIS 建設智慧城市」的學生小組專題。路線只供參考，請留意路牌及天文台的酷熱天氣提示。",sampleStartLbl:"維多利亞公園（示範起點）",tabPublic:"公眾版 · 免費",tabPremium:"進階版",pubTitle:"行陰涼路線",pubHint:"輸入目的地。起點留空即使用你目前的位置。",
   startPh:"我目前的位置",destPh:"最近的避暑點",pick:"在地圖上揀起點",go:"搵最陰涼路線",mostShaded:"最陰涼",fastest:"最快",
   shadeOnRoute:"路線上的遮蔭",otherShelters:"附近其他避暑點",lgCovered:"有蓋行人通道／天橋",lgTrees:"林蔭街道",lgShelter:"避暑點（有冷氣）",
   premFor:"適用於政府部門及非政府機構",plansTitle:"選擇進階版計劃",plansHint:"公眾版永遠免費。進階版計劃收費提供熱風險分析及服務。價錢為示範用建議。",
@@ -491,7 +506,7 @@ const T = {
   stShel:"避暑點",stOut:"10 分鐘範圍外的高風險人口",stDes:"避暑沙漠",layers:"地圖圖層",lyCatch:"5／10 分鐘步行範圍",lyLst:"地表熱點（Landsat）",lyShade:"有蓋行人通道",lyDemand:"公眾版需求（匿名）",
   lgDesert:"> 10 分鐘（沙漠）",deployTitle:"本週建議部署位置",rankTitle:"所有社區優先次序",rankHint:"分數 = 高風險人口 × 步行分鐘 × 地表溫度。按一下放大。",
   note:"測試版。路線遮蔭使用 OpenStreetMap 的真實有蓋通道、天橋、隧道、商場及林蔭路數據，或有遺漏。避暑點位置為約數；進階版的人口、地表溫度及需求數字為示範數據。",
-  bmHK:"香港地圖（地政總署）",bmTopo:"地形圖",bmImg:"衛星影像",navRoute:"陰涼路線",navPrem:"進階版",
+  bmHK:"香港地圖",bmTopo:"地形圖",bmImg:"衛星影像",navRoute:"陰涼路線",navPrem:"進階版",
   layoutAuto:"自動",layoutPhone:"📱 手機版",layoutDesk:"💻 電腦版",
   allDistricts:"全部地區",planCommunity:"社區版計劃",planPro:"政府專業版計劃",
   proOnly:"政府專業版功能",upgradeMsg:"升級至政府專業版，即可查看降溫站部署建議、公眾需求數據及匯出報告。",upgrade:"升級至專業版（示範）",
@@ -516,7 +531,7 @@ const T = {
   lgMtr:"港鐵綫及車站",useMyLoc:"使用我目前的位置",nearestOpt:"最近的避暑點",hdrNearMtr:"附近港鐵站",hdrNearShel:"附近避暑點",
   hdrMtr:"港鐵站",hdrExits:"車站出口",hdrPlaces:"地點",hdrSearch:"地址及地點",exit:"出口",stCentre:"車站中心",chooseExit:"出口：",
   exitsLoading:"正在載入出口…",exitsNone:"需要上網才能顯示出口位置。",stSuf:"站",exitLabel:(st,r)=>`${st}站 ${r} 出口`,
-  linesLbl:"路綫",exitsLbl:"出口",typeShelter:"避暑點",typeArea:"社區",noSugg:"暫時未有結果，繼續輸入或按「搵最陰涼路線」。",hdrAddr:"地址",hdrGoogle:"Google 地圖地點",srcALS:"地址",srcGeo:"地理資訊地圖",openGmaps:"在 Google 地圖開啟步行路線",settings:"設定",setLang:"語言",setView:"顯示模式",setMap:"地圖類型",setLayers:"地圖顯示",vAuto:"自動",vPhone:"📱 手機版",vDesk:"💻 電腦版",pMtr:"港鐵綫及車站",pShade:"有蓋通道及遮蔭",pShel:"避暑點"}
+  linesLbl:"路綫",exitsLbl:"出口",typeShelter:"避暑點",typeArea:"社區",noSugg:"暫時未有結果，繼續輸入或按「搵最陰涼路線」。",hdrAddr:"地址",hdrGoogle:"Google 地圖地點",srcALS:"地址",srcGeo:"地理資訊地圖",openGmaps:"在 Google 地圖開啟步行路線",settings:"設定",setLang:"語言",setView:"顯示模式",setMap:"地圖類型",setLayers:"地圖顯示",vAuto:"自動",vPhone:"手機版",vDesk:"電腦版",pMtr:"港鐵綫及車站",pShade:"有蓋通道及遮蔭",pShel:"避暑點"}
 };
 let lang = "en"; try{ lang = localStorage.getItem("coolhk-lang") || "en"; }catch(e){}
 const t = (k,...a) => { const v = T[lang][k] ?? T.en[k]; return typeof v==="function" ? v(...a) : v; };
@@ -999,13 +1014,15 @@ require(["esri/config","esri/Map","esri/WebMap","esri/views/MapView","esri/Basem
   reactiveUtils.watch(()=>view.stationary,s=>{ if(s) drawOSM(); });
 
   view.on("click",e=>{
-    if(picking){ e.stopPropagation(); picking=false; $("pickBtn").setAttribute("aria-pressed","false");
-      startPoint={lat:e.mapPoint.latitude,lng:e.mapPoint.longitude,en:t("start"),zh:t("start")};
-      $("startIn").value = `${e.mapPoint.latitude.toFixed(4)}, ${e.mapPoint.longitude.toFixed(4)}`; $("startIn")._sel={...startPoint,label:$("startIn").value}; renderExitRow("start",null); findRoute(); }
+    if(picking){ e.stopPropagation(); setPicking(false);
+      // I. a readable label instead of raw coordinates
+      startPoint={lat:e.mapPoint.latitude,lng:e.mapPoint.longitude,en:T.en.pinned,zh:T.zh.pinned};
+      $("startIn").value = t("pinned"); $("startIn")._sel={...startPoint,label:$("startIn").value}; renderExitRow("start",null); findRoute(); }
   });
   reactiveUtils.when(()=>view.stationary,()=>{ if(version==="premium"&&view.center) renderWeather([view.center.latitude,view.center.longitude]); });
 
   drawShade(); drawShelters(); drawCatch(); drawMTR();
+  reactiveUtils.when(()=>!view.updating,()=>{$("mapLoading").hidden=true},{once:true}); setTimeout(()=>{$("mapLoading").hidden=true},12000);
   view.when(()=>{ padView(); setTimeout(loadShadeData,1200); let b="hk"; try{b=localStorage.getItem("coolhk-basemap")||"hk"}catch(e){}; if(b!=="hk"&&!CONFIG.WEBMAP_ID) setBasemap(b); else document.querySelectorAll("#bmaps button").forEach(x=>x.setAttribute("aria-pressed",x.dataset.b==="hk")); show("public"); checkHKTiles(); });
 });
 
@@ -1181,6 +1198,7 @@ function localSuggest(raw,field){
     const p=refPoint(), byD=(arr)=>arr.map(o=>({o,d:dist(p,[o.lat,o.lng])})).sort((a,b)=>a.d-b.d);
     groups.push({hdr:null,items:[field==="start"?{kind:"here",label:t("useMyLoc"),sub:"",icon:`<span class="ic" style="background:var(--heat-soft);color:var(--heat)">◎</span>`}
                                                :{kind:"nearest",label:t("nearestOpt"),sub:"",icon:`<span class="ic" style="background:var(--cool-soft);color:var(--cool)">❄</span>`}]});
+    if(!(startPoint&&startPoint.en!==SAMPLE_START.en)) return groups;
     const ms=byD(MTR).slice(0,4).map(x=>({...itemFor(x.o,"mtr"),sub:`${lineNames(x.o)} · ~${walkMin(x.d).toFixed(0)} ${t("min")}`}));
     const ss=byD(SHELTERS).slice(0,field==="dest"?4:2).map(x=>({...itemFor(x.o,"shelter"),sub:`${t("typeShelter")} · ~${walkMin(x.d).toFixed(0)} ${t("min")}`}));
     if(field==="dest"){groups.push({hdr:t("hdrNearShel"),items:ss});groups.push({hdr:t("hdrNearMtr"),items:ms})}
@@ -1241,7 +1259,8 @@ function renderExitRow(field,st,ref){
 function refreshExitRows(){["start","dest"].forEach(f=>{const row=$(f+"Exits");if(row._st){const s=$(f+"In")._sel;renderExitRow(f,row._st,s&&s.kind==="exit"?s.ref:null)}})}
 ["start","dest"].forEach(field=>{
   const inp=$(field+"In"), box=$(field+"Sugg"), st=SUG[field];
-  inp.addEventListener("focus",()=>{st.idx=-1;renderSugg(field)});
+  inp.addEventListener("focus",()=>{st.idx=-1;renderSugg(field);
+    if($("app").dataset.layout==="phone"&&$("sheet").dataset.state!=="full"){sheetTo("full");setTimeout(()=>inp.scrollIntoView({block:"start",behavior:"smooth"}),300)}});
   inp.addEventListener("input",()=>{inp._sel=null;if(field==="start")startPoint=null;renderExitRow(field,null);st.idx=-1;st.remote=[];renderSugg(field);remoteSearch(field)});
   inp.addEventListener("keydown",e=>{
     if(box.hidden) return;
@@ -1333,14 +1352,16 @@ async function pointFrom(field){
   if(first && first.lat) return first;
   return await resolvePlace(v);
 }
-async function findRoute(){
+function setBusy(b){const btn=$("tripForm").querySelector('button[type=submit]');btn.disabled=b;btn.textContent=b?t("finding"):t("go");btn.style.opacity=b?.75:1}
+async function findRoute(){ setBusy(true); try{ await findRoute0(); } finally{ setBusy(false); } }
+async function findRoute0(){
   const st=$("status"); const id=++reqId;
   st.textContent=t("searching");
   // start: typed / chosen place, otherwise current location
-  if($("startIn").value.trim()){ const p=await pointFrom("start"); if(!p){st.textContent=t("notFound",$("startIn").value);return} startPoint=p; }
+  if($("startIn").value.trim()){ const p=await pointFrom("start"); if(!p){st.textContent=t("notFound",$("startIn").value);toast(st.textContent);return} startPoint=p; }
   else { st.textContent=t("locating"); const p=await currentLocation(); if(p) startPoint=p; else { startPoint=SAMPLE_START; const si=$("startIn"); si.value=t("sampleStartLbl"); si._sel={...SAMPLE_START,label:si.value}; toast(t("noGeo")); } }
   // destination: typed / chosen place, otherwise nearest cool shelter
-  if($("destIn").value.trim()){ const p=await pointFrom("dest"); if(!p){st.textContent=t("notFound",$("destIn").value);return} destPoint=p; }
+  if($("destIn").value.trim()){ const p=await pointFrom("dest"); if(!p){st.textContent=t("notFound",$("destIn").value);toast(st.textContent);return} destPoint=p; }
   else destPoint=nearestShelters([startPoint.lat,startPoint.lng])[0].s;
   if(id!==reqId) return;
   renderWeather([startPoint.lat,startPoint.lng]);
@@ -1383,7 +1404,7 @@ async function plan(id){
   let sh=fast;
   all.forEach(r=>{ if(r===fast||r.meters>fast.meters*1.45) return; if(sun(fast)-sun(r)>=WALK/2 && cost(r)<cost(sh)) sh=r; });
   const shadeNote=(OSM&&OSM.length)?"":t("shadeSample");
-  routes={fast,shade:sh,note:shadeNote}; chosen="shade"; sheetTo("peek"); renderRoutes(true);
+  routes={fast,shade:sh,note:shadeNote,from:{...startPoint},to:{...destPoint}}; chosen="shade"; sheetTo("peek"); renderRoutes(true);
   if($("app").dataset.layout==="phone") setTimeout(()=>$("status").scrollIntoView({block:"start",behavior:"smooth"}),300);
 }
 function fmtCard(r,p){
@@ -1411,7 +1432,8 @@ function shadeGroups(used,um){ um=um||{};
   return GROUPS;
 }
 function renderRoutes(zoom){
-  if(!view) return; layers.route.removeAll();
+  if(!view||!routes.fast) return; layers.route.removeAll();
+  const startPoint=routes.from, destPoint=routes.to; // the trip this route was made for (inputs may have changed since)
   const {fast,shade}=routes, main=routes[chosen], other=chosen==="shade"?fast:shade;
   if(other!==main) layers.route.add(new Graphic({geometry:pline(other.coords),symbol:{type:"simple-line",color:css("--sun"),width:4,style:"dash"}}));
   const g=new Graphic({geometry:pline(main.coords),symbol:{type:"simple-line",color:[255,255,255,.95],width:11,cap:"round",join:"round"}});
@@ -1425,7 +1447,7 @@ function renderRoutes(zoom){
     if(dist(a,b)>8) layers.route.add(new Graphic({geometry:pline([a,b]),symbol:{type:"simple-line",color:css("--muted"),width:2.5,style:"short-dot"}}))});
   layers.route.add(dot(startPoint.lat,startPoint.lng,css("--heat"),16,{title:t("start"),content:nm(startPoint)}));
   layers.route.add(dot(destPoint.lat,destPoint.lng,css("--cool"),18,{title:nm(destPoint),content:destPoint.type?t("freeAccess"):""},"#132a33"));
-  mtrFade(); applyPrefs(); if(zoom) view.goTo({target:g.geometry.extent.clone().expand(1.6)}).catch(()=>{});
+  $("routeLegend").classList.add("has-route"); mtrFade(); applyPrefs(); if(zoom) view.goTo({target:g.geometry.extent.clone().expand(1.6)}).catch(()=>{});
   $("routes").hidden=false; fmtCard(shade,"sh"); fmtCard(fast,"fa");
   const gl=$("gmapsLink"); gl.hidden=false;
   gl.href=`https://www.google.com/maps/dir/?api=1&origin=${startPoint.lat},${startPoint.lng}&destination=${destPoint.lat},${destPoint.lng}&travelmode=walking`;
@@ -1443,7 +1465,9 @@ function renderRoutes(zoom){
 $("tripForm").onsubmit=e=>{e.preventDefault();document.activeElement.blur();findRoute()};
 $("rcShade").onclick=()=>{if(routes.shade){chosen="shade";renderRoutes()}};
 $("rcFast").onclick=()=>{if(routes.fast){chosen="fast";renderRoutes()}};
-$("pickBtn").onclick=()=>{picking=!picking;$("pickBtn").setAttribute("aria-pressed",picking);if(picking){toast(t("pickNow"));sheetTo("mini")}};
+function setPicking(on){picking=on;$("pickBtn").setAttribute("aria-pressed",on);$("pickBar").hidden=!on;$("map").classList.toggle("picking",on);if(on)sheetTo("mini")}
+$("pickBtn").onclick=()=>setPicking(!picking);
+$("pickCancel").onclick=()=>{setPicking(false);sheetTo("peek")};
 $("swapBtn").onclick=()=>{const A=$("startIn"),B=$("destIn");[A.value,B.value]=[B.value,A.value];[A._sel,B._sel]=[B._sel,A._sel];startPoint=null;
   [["start",A],["dest",B]].forEach(([f,i])=>renderExitRow(f,i._sel&&(i._sel.kind==="mtr"||i._sel.kind==="exit")?i._sel.obj:null,i._sel&&i._sel.kind==="exit"?i._sel.ref:null))};
 $("shadeList").addEventListener("click",e=>{const b=e.target.closest(".row");if(!b||!view)return;
@@ -1546,6 +1570,10 @@ async function autoRoute(){ if(autoTried) return; autoTried=true;
 // =====================================================================
 // START
 // =====================================================================
+// F. clear (x) buttons
+["start","dest"].forEach(f=>{const inp=$(f+"In"),b=document.createElement("button");b.type="button";b.className="clr";b.textContent="×";b.setAttribute("aria-label",t("clear"));
+  inp.insertAdjacentElement("afterend",b); const upd=()=>{b.hidden=!inp.value}; inp.addEventListener("input",upd); setInterval(upd,400); upd();
+  b.onclick=()=>{inp.value="";inp._sel=null;renderExitRow(f,null);upd();inp.focus();inp.dispatchEvent(new Event("input",{bubbles:true}))}});
 applyLayout(); applyLang();
 loadWeather().then(()=>renderWeather());
 loadExits();
