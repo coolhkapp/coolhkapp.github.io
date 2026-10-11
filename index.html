@@ -804,7 +804,7 @@ require(["esri/config","esri/Map","esri/WebMap","esri/views/MapView","esri/Basem
   map.addMany([layers.lst,layers.catch,layers.demand,layers.shade,layers.areas,layers.shelters,layers.mtr,layers.route,layers.exits,layers.deploy]);
 
   view = new MapView({container:"map",map,center:[114.18,22.30],zoom:13,
-    constraints:{maxZoom:19,snapToZoom:false,rotationEnabled:false,geometry:new Extent({...HK_MERC,spatialReference:{wkid:3857}})},
+    constraints:{maxZoom:19,snapToZoom:false,rotationEnabled:false,lods:Array.from({length:24},(_,z)=>({level:z,resolution:156543.03392800014/2**z,scale:591657527.591555/2**z})),geometry:new Extent({...HK_MERC,spatialReference:{wkid:3857}})},
     popup:{dockEnabled:false,dockOptions:{buttonEnabled:false}}});
   view.ui.move("zoom","bottom-right");
   // never zoom out past the whole of Hong Kong: the smallest scale is the one that just fits the territory
