@@ -14,7 +14,7 @@
 :root{
   --bg:#eef3f4; --panel:#ffffff; --ink:#132a33; --muted:#5b707a; --line:#d8e2e6;
   --cool:#0f7c8c; --cool-soft:#d6eef1; --shade:#1f9d6b; --tree:#6aa84f; --heat:#d9480f; --heat-soft:#fde4d6;
-  --warn:#e8a317; --ok:#2f8f5b; --sun:#9aa7ad; --rshade:#1f9d6b; --rsun:#f08c00; --prem:#7a4fbf; --prem-soft:#ece4f7;
+  --warn:#e8a317; --ok:#2f8f5b; --sun:#9aa7ad; --rshade:#2563eb; --rsun:#f08c00; --prem:#7a4fbf; --prem-soft:#ece4f7;
   --f-display:"Bricolage Grotesque","Noto Sans TC",ui-sans-serif,system-ui,sans-serif;
   --f-body:"Figtree","Noto Sans TC",ui-sans-serif,system-ui,sans-serif;
   --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
@@ -265,11 +265,9 @@ body.framed-bg{background:#cfd8db}
               <span class="s" id="faSub"></span>
             </button>
           </div>
-          <div class="legend" id="routeLegend"><span class="lgnote rl" data-i18n="lgNote">Route colours show what shades each part:</span>
+          <div class="legend" id="routeLegend">
+            <span class="rl"><i class="ln" style="background:var(--rshade)"></i><span data-i18n="lgRShade">Route in shade</span></span>
             <span class="rl"><i class="ln" style="background:var(--rsun)"></i><span data-i18n="lgRSun">Route in the sun</span></span>
-            <span><i class="ln" style="background:var(--shade)"></i><span data-i18n="lgCovered">Covered walkway / footbridge</span></span>
-            <span><i class="ln" style="background:var(--tree)"></i><span data-i18n="lgTrees">Tree-lined street</span></span>
-            <span><i class="ln" style="background:var(--cool)"></i><span data-i18n="lgIndoor">Subway / indoor / mall</span></span>
             <span><i style="background:var(--cool)"></i><span data-i18n="lgShelter">Cool shelter (air-con)</span></span>
             <span><i class="ln" style="background:#0075C2"></i><i style="background:#fff;border:2px solid #132a33;box-sizing:border-box;margin-left:-12px"></i><span data-i18n="lgMtr">MTR line &amp; station</span></span>
           </div>
@@ -404,7 +402,7 @@ body.framed-bg{background:#cfd8db}
         <div class="optrow" id="bmaps"><button data-b="hk" data-i18n="bmHK">HK Map</button><button data-b="topo" data-i18n="bmTopo">Topographic</button><button data-b="hybrid" data-i18n="bmImg">Imagery</button></div></div>
       <div class="opt"><span class="lbl" data-i18n="setLayers">Show on map</span>
         <label class="toggle"><span data-i18n="pMtr">MTR lines &amp; stations</span><input type="checkbox" id="prefMtr"></label>
-        <label class="toggle"><span data-i18n="pShade">Covered walkways &amp; shade</span><input type="checkbox" id="prefShade"></label>
+        <label class="toggle" hidden><span data-i18n="pShade">Covered walkways &amp; shade</span><input type="checkbox" id="prefShade"></label>
         <label class="toggle"><span data-i18n="pShel">Cool shelters</span><input type="checkbox" id="prefShel"></label>
       </div>
       <div class="opt"><span class="lbl" data-i18n="setAbout">About &amp; credits</span>
@@ -826,7 +824,7 @@ const KIND_KEY={c:"kC",b:"kB",u:"kU",i:"kI",t:"kT",m:"kM"};
 function osmName(o){return (lang==="zh"?(o.zh||o.en):(o.en||o.zh))||""}
 function drawOSM(){
   if(!view||!layers.oshade) return; layers.oshade.removeAll();
-  if(!(OSM&&OSM.length)||view.zoom<14||version!=="public"||!view.extent) return;
+  return; // walkway layer not drawn: the route itself shows where the shade is
   const e=view.extent, toLat=y=>(2*Math.atan(Math.exp(y/6378137))-Math.PI/2)*180/Math.PI, toLng=x=>x/6378137*180/Math.PI;
   const ids=osmNear([toLat(e.ymin),toLng(e.xmin)],[toLat(e.ymax),toLng(e.xmax)],0).slice(0,1500);
   ids.forEach(i=>{const o=OSM[i], title=osmName(o)||t(KIND_KEY[o.k]), pop={title,content:t(KIND_KEY[o.k])};
@@ -1440,7 +1438,7 @@ function renderRoutes(zoom){
   layers.route.add(g);
   // colour each stretch: blue = in shade (covered walkway, trees or past a cool shelter), orange = in the sun
   // each stretch: green = covered walkway / footbridge, light green = trees, teal = subway / indoor / mall, orange = sun
-  const kcol=k=>k==="t"?css("--tree"):(k==="u"||k==="i"||k==="m")?css("--cool"):k?css("--shade"):css("--rsun");
+  const kcol=k=>k?css("--rshade"):css("--rsun"); // blue = in shade, orange = in the sun
   runs(main.stats.dc,main.stats.kinds||main.stats.flags).forEach(r=>layers.route.add(new Graphic({geometry:pline(r.pts),
     symbol:{type:"simple-line",color:kcol(r.f),width:7,cap:"round",join:"round"},
     attributes:{m:Math.round(r.m)},popupTemplate:{title:r.f?(KIND_KEY[r.f]?t(KIND_KEY[r.f]):t("segShade")):t("segSun"),content:`~${Math.max(1,Math.round(r.m/WALK))} ${t("min")} · ${Math.round(r.m)} m`}})));
