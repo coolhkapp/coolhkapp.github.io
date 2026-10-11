@@ -782,6 +782,14 @@ function shadeCandidates(a,b){
   if(chain.length>1) out.push(chain);
   return out;
 }
+// remove out-and-back spurs where joining the network makes the path double back on itself
+function unspur(c){
+  const out=[]; let i=0;
+  while(i<c.length){ out.push(c[i]); let jump=-1;
+    for(let j=Math.min(c.length-1,i+400);j>i+2;j--){ if(dist(c[i],c[j])<12){ let L=0; for(let k=i+1;k<=j;k++) L+=dist(c[k-1],c[k]); if(L>40){jump=j;break} } }
+    i = jump>0 ? jump : i+1; }
+  return out;
+}
 // one street-router call per option: start → (shade path) → … → destination; shaded legs use the real network path
 async function viaShade(a,b,segs){
   const pts=[a]; segs.forEach(s=>pts.push(s.en.p,s.ex.p)); pts.push(b);
@@ -791,7 +799,9 @@ async function viaShade(a,b,segs){
     if(!j.routes||!j.routes[0]) return null; let coords=[],m=0;
     j.routes[0].legs.forEach((lg,i)=>{ if(i%2){const s=segs[(i-1)/2];coords=coords.concat(s.path.pts);m+=s.path.len}
       else{lg.steps.forEach(st=>{coords=coords.concat(st.geometry.coordinates.map(([x,y])=>[y,x]))});m+=lg.distance} });
-    return coords.length>1?{coords,meters:m,live:true}:null;
+    if(coords.length<2) return null;
+    coords=unspur(coords); let mm=0; for(let i=1;i<coords.length;i++) mm+=dist(coords[i-1],coords[i]);
+    return{coords,meters:Math.max(mm,m*0.9),live:true};
   }catch(e){return null}finally{clearTimeout(tm)}
 }
 const KIND_KEY={c:"kC",b:"kB",u:"kU",i:"kI",t:"kT",m:"kM"};
