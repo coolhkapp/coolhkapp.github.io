@@ -596,17 +596,17 @@ const AREAS = [
  ["Ngau Tau Kok","牛頭角","Kwun Tong",22.3200,114.2190,4100,3000,41.9],
  ["Sau Mau Ping","秀茂坪","Kwun Tong",22.3195,114.2330,6900,4200,40.8],
  ["Lam Tin","藍田","Kwun Tong",22.3080,114.2380,4600,3300,40.1],
- ["Tsz Wan Shan","慈雲山","Wong Tai Sin",22.3500,114.2000,7200,3500,39.6],
+ ["Tsz Wan Shan","慈雲山","Wong Tai Sin",22.35584,114.20422,7200,3500,39.6],
  ["Choi Hung","彩虹","Wong Tai Sin",22.3345,114.2080,3800,2400,40.7],
- ["Wong Tai Sin Estate","黃大仙下邨","Wong Tai Sin",22.3420,114.1950,3300,2200,40.9],
+ ["Wong Tai Sin Estate","黃大仙下邨","Wong Tai Sin",22.34018,114.19130,3300,2200,40.9],
  ["North Point","北角","Eastern",22.2910,114.2000,4200,2100,40.3],
  ["Shau Kei Wan","筲箕灣","Eastern",22.2790,114.2280,5000,2500,39.8],
  ["Wan Chai old district","灣仔舊區","Wan Chai",22.2770,114.1740,2100,900,42.2],
  ["Kennedy Town","堅尼地城","Central & Western",22.2830,114.1290,3500,1800,39.4],
  ["Sai Ying Pun","西營盤","Central & Western",22.2860,114.1430,2700,1300,40.0],
- ["Kwai Chung Estate","葵涌邨","Kwai Tsing",22.3640,114.1300,6100,3800,41.0],
+ ["Kwai Chung Estate","葵涌邨","Kwai Tsing",22.36851,114.12710,6100,3800,41.0],
  ["Tsuen Wan town","荃灣市中心","Tsuen Wan",22.3720,114.1150,3000,2000,40.6],
- ["Lek Yuen Estate","瀝源邨","Sha Tin",22.3800,114.1910,3900,2100,38.9],
+ ["Lek Yuen Estate","瀝源邨","Sha Tin",22.38514,114.19160,3900,2100,38.9],
 ].map(([en,zh,dist,lat,lng,old,kids,lst])=>({en,zh,dist,lat,lng,old,kids,lst}));
 // HKO automatic weather stations used by the "rhrread" feed (approx. coordinates)
 const STATIONS = [
@@ -1168,7 +1168,7 @@ async function searchGeoInfo(q,n=5){
   if(!Array.isArray(r)) return [];
   return r.filter(x=>!GEO_NOISE.test((x.nameZH||"")+(x.nameEN||""))).map(x=>{
     const[la,ln]=hk80ToWgs(+x.x,+x.y); const en=titleCase(x.nameEN||x.addressEN||q), zh=x.nameZH||x.addressZH||en;
-    const addr=(lang==="zh"?x.addressZH:x.addressEN)||"";
+    const addr=(lang==="zh"?x.addressZH:titleCase(x.addressEN))||"";
     return{kind:"place",lat:la,lng:ln,en,zh,label:lang==="zh"?zh:en,sub:(addr?addr.replace(/\s{2,}/g," ")+" · ":"")+t("srcGeo"),icon:`<span class="ic">📍</span>`,
       // match on the place name; the address only counts when it contains the whole query (e.g. "培正道5號")
       rel:Math.max(relevance(q,zh),relevance(q,en),[x.addressZH,x.addressEN].some(a=>a&&relevance(q,a)===1)?.9:0)};
