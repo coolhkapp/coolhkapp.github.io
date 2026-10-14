@@ -1155,11 +1155,13 @@ async function searchALS(q,n=5){
 function relevance(q,label){
   const a=(q||"").toLowerCase().replace(/[\s,.'’()（）\-]/g,""), b=(label||"").toLowerCase().replace(/[\s,.'’()（）\-]/g,"");
   if(!a||!b) return 0; if(b.includes(a)) return 1;
-  if(/[\u4e00-\u9fff]/.test(a)){ const cs=[...new Set(a)]; return cs.filter(c=>b.includes(c)).length/cs.length; }
+  if(/[\u4e00-\u9fff]/.test(a)){ // Chinese: share of the query's character pairs found in the result
+    const bg=[];for(let i=0;i<a.length-1;i++)bg.push(a.slice(i,i+2)); if(!bg.length) return b.includes(a)?1:0;
+    return bg.filter(x=>b.includes(x)).length/bg.length; }
   const ws=(q||"").toLowerCase().split(/[^a-z0-9]+/).filter(w=>w.length>1); if(!ws.length) return 0;
   return ws.filter(w=>b.includes(w)).length/ws.length;
 }
-const GEO_NOISE=/自動心臟除顫器|Defibrillator|Wi-Fi|智郵站|iPostal|郵政信箱|別稱|Other Name/i;
+const GEO_NOISE=/自動心臟除顫器|Defibrillator|Wi-?Fi|熱點|Access Point|智郵站|iPostal|郵政信箱|別稱|Other Name|充電|Charging/i;
 // HK Government location search (Lands Department GeoInfo Map): named buildings, facilities, streets and addresses, in both languages
 async function searchGeoInfo(q,n=5){
   const r=await fetch(`https://www.map.gov.hk/gs/api/v1.0.0/locationSearch?q=${encodeURIComponent(q)}`).then(r=>r.json());
@@ -1168,8 +1170,9 @@ async function searchGeoInfo(q,n=5){
     const[la,ln]=hk80ToWgs(+x.x,+x.y); const en=titleCase(x.nameEN||x.addressEN||q), zh=x.nameZH||x.addressZH||en;
     const addr=(lang==="zh"?x.addressZH:x.addressEN)||"";
     return{kind:"place",lat:la,lng:ln,en,zh,label:lang==="zh"?zh:en,sub:(addr?addr.replace(/\s{2,}/g," ")+" · ":"")+t("srcGeo"),icon:`<span class="ic">📍</span>`,
-      rel:Math.max(relevance(q,zh),relevance(q,en),relevance(q,x.addressZH),relevance(q,x.addressEN))};
-  }).filter(x=>x.rel>=0.5).sort((a,b)=>b.rel-a.rel).slice(0,n);
+      // match on the place name; the address only counts when it contains the whole query (e.g. "培正道5號")
+      rel:Math.max(relevance(q,zh),relevance(q,en),[x.addressZH,x.addressEN].some(a=>a&&relevance(q,a)===1)?.9:0)};
+  }).filter(x=>x.rel>=0.6).sort((a,b)=>b.rel-a.rel).slice(0,n);
 }
 let gPlaces=null;
 async function googleReady(){
