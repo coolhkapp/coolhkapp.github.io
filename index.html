@@ -541,30 +541,31 @@ const nm = o => lang==="zh" ? (o.zh||o.en) : o.en;
 const D = {"Wan Chai":"灣仔","Central & Western":"中西區","Yau Tsim Mong":"油尖旺","Kowloon City":"九龍城","Sham Shui Po":"深水埗","Wong Tai Sin":"黃大仙","Kwun Tong":"觀塘","Tsuen Wan":"荃灣","Sha Tin":"沙田","Eastern":"東區","Kwai Tsing":"葵青"};
 const TYPE = {Library:"圖書館",Mall:"商場","Community centre":"社區會堂"};
 const SHELTERS = [
- ["Hong Kong Central Library","香港中央圖書館","Library","Wan Chai",22.2800,114.1890],
- ["Times Square","時代廣場","Mall","Wan Chai",22.2782,114.1822],
- ["Lee Tung Avenue","利東街","Mall","Wan Chai",22.2752,114.1718],
- ["Pacific Place","太古廣場","Mall","Central & Western",22.2776,114.1653],
- ["IFC Mall","國際金融中心商場","Mall","Central & Western",22.2850,114.1588],
- ["City Hall Public Library","大會堂公共圖書館","Library","Central & Western",22.2817,114.1615],
- ["Sheung Wan Civic Centre","上環文娛中心","Community centre","Central & Western",22.2865,114.1500],
- ["Langham Place","朗豪坊","Mall","Yau Tsim Mong",22.3180,114.1685],
- ["Mong Kok Community Hall","旺角社區會堂","Community centre","Yau Tsim Mong",22.3215,114.1727],
- ["Elements","圓方","Mall","Yau Tsim Mong",22.3049,114.1615],
- ["Harbour City","海港城","Mall","Yau Tsim Mong",22.2965,114.1680],
- ["iSquare","國際廣場","Mall","Yau Tsim Mong",22.2966,114.1720],
- ["Kowloon Public Library","九龍公共圖書館","Library","Kowloon City",22.3122,114.1792],
- ["Dragon Centre","西九龍中心","Mall","Sham Shui Po",22.3306,114.1601],
- ["Festival Walk","又一城","Mall","Kowloon City",22.3372,114.1745],
- ["Lok Fu Place","樂富廣場","Mall","Wong Tai Sin",22.3380,114.1870],
- ["Wong Tai Sin Public Library","黃大仙公共圖書館","Library","Wong Tai Sin",22.3418,114.1938],
- ["Telford Plaza","德福廣場","Mall","Kwun Tong",22.3230,114.2135],
- ["apm","apm","Mall","Kwun Tong",22.3122,114.2253],
- ["Kwun Tong Public Library","觀塘公共圖書館","Library","Kwun Tong",22.3100,114.2240],
- ["Tsuen Wan Plaza","荃灣廣場","Mall","Tsuen Wan",22.3715,114.1140],
- ["New Town Plaza","新城市廣場","Mall","Sha Tin",22.3818,114.1885],
- ["Sha Tin Public Library","沙田公共圖書館","Library","Sha Tin",22.3827,114.1898],
- ["North Point Community Hall","北角社區會堂","Community centre","Eastern",22.2915,114.1985],
+ // positions checked against the HK Government location search (map.gov.hk / Lands Department), Oct 2026
+ ["Hong Kong Central Library","香港中央圖書館","Library","Wan Chai",22.27990,114.18965],
+ ["Times Square","時代廣場","Mall","Wan Chai",22.27830,114.18211],
+ ["Lee Tung Avenue","利東街","Mall","Wan Chai",22.27535,114.17231],
+ ["Pacific Place","太古廣場","Mall","Central & Western",22.27730,114.16542],
+ ["IFC Mall","國際金融中心商場","Mall","Central & Western",22.28463,114.15805],
+ ["City Hall Public Library","大會堂公共圖書館","Library","Central & Western",22.28215,114.16081],
+ ["Sheung Wan Civic Centre","上環文娛中心","Community centre","Central & Western",22.28594,114.14969],
+ ["Langham Place","朗豪坊","Mall","Yau Tsim Mong",22.31838,114.16852],
+ ["Mong Kok Community Hall","旺角社區會堂","Community centre","Yau Tsim Mong",22.31835,114.16810],
+ ["Elements","圓方","Mall","Yau Tsim Mong",22.30406,114.16156],
+ ["Harbour City","海港城","Mall","Yau Tsim Mong",22.29504,114.16715],
+ ["iSquare","國際廣場","Mall","Yau Tsim Mong",22.29705,114.17184],
+ ["Kowloon Public Library","九龍公共圖書館","Library","Kowloon City",22.31852,114.17605],
+ ["Dragon Centre","西九龍中心","Mall","Sham Shui Po",22.33120,114.15987],
+ ["Festival Walk","又一城","Mall","Sham Shui Po",22.33705,114.17486],
+ ["Lok Fu Place","樂富廣場","Mall","Wong Tai Sin",22.33741,114.18744],
+ ["Lung Hing Public Library","龍興公共圖書館","Library","Wong Tai Sin",22.34045,114.19280],
+ ["Telford Plaza","德福廣場","Mall","Kwun Tong",22.32151,114.21314],
+ ["apm","apm","Mall","Kwun Tong",22.31237,114.22518],
+ ["Shui Wo Street Public Library","瑞和街公共圖書館","Library","Kwun Tong",22.31567,114.22427],
+ ["Tsuen Wan Plaza","荃灣廣場","Mall","Tsuen Wan",22.37090,114.11123],
+ ["New Town Plaza","新城市廣場","Mall","Sha Tin",22.38150,114.18825],
+ ["Sha Tin Public Library","沙田公共圖書館","Library","Sha Tin",22.38067,114.18923],
+ ["North Point Community Hall","北角社區會堂","Community centre","Eastern",22.29284,114.20081],
 ].map(([en,zh,type,dist,lat,lng])=>({en,zh,type,dist,lat,lng}));
 const SHADE = [
  ["Central–Sheung Wan elevated walkway","中環至上環高架行人天橋","covered",[[22.2855,114.1585],[22.2862,114.1560],[22.2870,114.1530],[22.2875,114.1505]]],
@@ -1145,14 +1146,30 @@ async function searchALS(q,n=5){
     let la=parseFloat(g.Latitude), ln=parseFloat(g.Longitude);
     if(isNaN(la)||isNaN(ln)){ if(!g.Easting) return null; [la,ln]=hk80ToWgs(+g.Easting,+g.Northing); }
     const en=titleCase(alsLabel(pa,false))||q, zh=alsLabel(pa,true)||en;
-    return {kind:"place",lat:la,lng:ln,en,zh,label:lang==="zh"?zh:en,sub:t("srcALS"),icon:`<span class="ic">🏢</span>`};
-  }).filter(Boolean);
+    return {kind:"place",lat:la,lng:ln,en,zh,label:lang==="zh"?zh:en,sub:t("srcALS"),icon:`<span class="ic">🏢</span>`,rel:Math.max(relevance(q,en),relevance(q,zh))};
+  }).filter(Boolean)
+  // the address service always answers, even with a building on the other side of HK; keep only real matches
+  .filter(x=>x.rel>=0.6);
 }
+// how well a result matches what the user typed (0-1): Chinese by characters, English by words
+function relevance(q,label){
+  const a=(q||"").toLowerCase().replace(/[\s,.'’()（）\-]/g,""), b=(label||"").toLowerCase().replace(/[\s,.'’()（）\-]/g,"");
+  if(!a||!b) return 0; if(b.includes(a)) return 1;
+  if(/[\u4e00-\u9fff]/.test(a)){ const cs=[...new Set(a)]; return cs.filter(c=>b.includes(c)).length/cs.length; }
+  const ws=(q||"").toLowerCase().split(/[^a-z0-9]+/).filter(w=>w.length>1); if(!ws.length) return 0;
+  return ws.filter(w=>b.includes(w)).length/ws.length;
+}
+const GEO_NOISE=/自動心臟除顫器|Defibrillator|Wi-Fi|智郵站|iPostal|郵政信箱|別稱|Other Name/i;
+// HK Government location search (Lands Department GeoInfo Map): named buildings, facilities, streets and addresses, in both languages
 async function searchGeoInfo(q,n=5){
-  const r=await fetch(`https://geodata.gov.hk/gs/api/v1.0.0/locationSearch?q=${encodeURIComponent(q)}`).then(r=>r.json());
+  const r=await fetch(`https://www.map.gov.hk/gs/api/v1.0.0/locationSearch?q=${encodeURIComponent(q)}`).then(r=>r.json());
   if(!Array.isArray(r)) return [];
-  return r.slice(0,n).map(x=>{const[la,ln]=hk80ToWgs(+x.x,+x.y);const en=x.nameEN||x.addressEN||q,zh=x.nameZH||x.addressZH||en;
-    return{kind:"place",lat:la,lng:ln,en,zh,label:lang==="zh"?zh:en,sub:(lang==="zh"?x.addressZH:x.addressEN)||t("srcGeo"),icon:`<span class="ic">📍</span>`}});
+  return r.filter(x=>!GEO_NOISE.test((x.nameZH||"")+(x.nameEN||""))).map(x=>{
+    const[la,ln]=hk80ToWgs(+x.x,+x.y); const en=titleCase(x.nameEN||x.addressEN||q), zh=x.nameZH||x.addressZH||en;
+    const addr=(lang==="zh"?x.addressZH:x.addressEN)||"";
+    return{kind:"place",lat:la,lng:ln,en,zh,label:lang==="zh"?zh:en,sub:(addr?addr.replace(/\s{2,}/g," ")+" · ":"")+t("srcGeo"),icon:`<span class="ic">📍</span>`,
+      rel:Math.max(relevance(q,zh),relevance(q,en),relevance(q,x.addressZH),relevance(q,x.addressEN))};
+  }).filter(x=>x.rel>=0.5).sort((a,b)=>b.rel-a.rel).slice(0,n);
 }
 let gPlaces=null;
 async function googleReady(){
@@ -1209,7 +1226,7 @@ function localSuggest(raw,field){
     const st=MTR.map(s=>({s,k:matchScore(s,sq)})).filter(x=>x.k<9).sort((a,b)=>a.k-b.k)[0];
     if(st&&st.s.exits&&st.s.exits.length){const xs=st.s.exits.filter(x=>x.ref.startsWith(ref));if(xs.length)groups.push({hdr:t("hdrExits"),items:xs.slice(0,8).map(x=>exitItem(st.s,x))})}}
   const pick=(arr,kind,n)=>arr.map(o=>({o,k:matchScore(o,q)})).filter(x=>x.k<9).sort((a,b)=>a.k-b.k).slice(0,n).map(x=>itemFor(x.o,kind));
-  const m=pick(MTR,"mtr",6), sh=pick(SHELTERS,"shelter",4), ar=pick(AREAS,"area",3);
+  const m=pick(MTR,"mtr",6), sh=pick(SHELTERS,"shelter",4), ar=version==="premium"?pick(AREAS,"area",3):[];
   if(m.length) groups.push({hdr:t("hdrMtr"),items:m});
   if(sh.length||ar.length) groups.push({hdr:t("hdrPlaces"),items:[...sh,...ar]});
   return groups;
@@ -1229,10 +1246,10 @@ function remoteSearch(field){
   if(q.length<2) return;
   st.timer=setTimeout(async()=>{
     const safe=p=>p.catch(()=>[]);
-    const [g,a,geo]=await Promise.all([safe(searchGoogle(q)),safe(searchALS(q,4)),safe(searchGeoInfo(q,4))]);
+    const [g,a,geo]=await Promise.all([safe(searchGoogle(q)),safe(searchALS(q,4)),safe(searchGeoInfo(q,5))]);
     if($(field+"In").value.trim()!==q) return;
     const seen=new Set(), out=[];
-    [...g,...geo,...a].forEach(it=>{const k=it.label.toLowerCase();if(!seen.has(k)){seen.add(k);out.push(it)}});
+    [...geo,...g,...a].forEach(it=>{const k=it.label.toLowerCase();if(!seen.has(k)&&!out.some(o=>dist([o.lat,o.lng],[it.lat,it.lng])<25&&relevance(o.label,it.label)>.8)){seen.add(k);out.push(it)}});
     st.remote=out.slice(0,9);
     if(!$(field+"Sugg").hidden) renderSugg(field);
   },350);
@@ -1318,20 +1335,14 @@ let startPoint=null, destPoint=null, routes={}, chosen="shade", reqId=0, picking
 async function resolvePlace(q){
   const s=q.trim(); if(!s) return null;
   const m=s.match(/^(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)$/); if(m) return {lat:+m[1],lng:+m[2],en:s,zh:s};
-  const low=s.toLowerCase();
-  const local=[...MTR,...SHELTERS,...AREAS,...SHADE.map(x=>({...x,lat:x.pts[0][0],lng:x.pts[0][1]}))]
-    .find(o=>o.en.toLowerCase()===low||o.zh===s) || [...MTR,...SHELTERS,...AREAS].find(o=>o.en.toLowerCase().includes(low)||o.zh.includes(s));
+  // 1) exact name of an MTR station or cool shelter
+  const low=norm(s), local=MTR.find(o=>norm(o.en)===low||o.zh===low)||SHELTERS.find(o=>o.en.toLowerCase()===s.toLowerCase()||o.zh===s);
   if(local) return local;
-  try{ const a=await searchALS(s,1); if(a.length) return a[0]; }catch(e){}
+  // 2) HK Government location search (best for named places and addresses)
+  try{ const g=await searchGeoInfo(s,3); if(g.length) return g[0]; }catch(e){}
+  // 3) Address Lookup Service, only if the answer really matches
+  try{ const a=await searchALS(s,3); if(a.length) return a[0]; }catch(e){}
   try{ const g=await searchGoogle(s); if(g.length) return await googlePoint(g[0]); }catch(e){}
-  try{ // Hong Kong government location search (results in HK1980 Grid)
-    const r=await fetch(`https://geodata.gov.hk/gs/api/v1.0.0/locationSearch?q=${encodeURIComponent(s)}`).then(r=>r.json());
-    if(Array.isArray(r)&&r.length){const[la,ln]=hk80ToWgs(+r[0].x,+r[0].y);return{lat:la,lng:ln,en:r[0].nameEN||s,zh:r[0].nameZH||s}}
-  }catch(e){}
-  try{ // fallback: ArcGIS World Geocoding Service
-    const r=await fetch(`https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?SingleLine=${encodeURIComponent(s)}&countryCode=HKG&maxLocations=1&outFields=PlaceName&f=json`).then(r=>r.json());
-    const c=r.candidates&&r.candidates[0]; if(c) return{lat:c.location.y,lng:c.location.x,en:c.address,zh:c.address};
-  }catch(e){}
   return null;
 }
 function currentLocation(){
@@ -1347,7 +1358,7 @@ async function pointFrom(field){
   if(!v) return null;
   const m=v.match(/^(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)$/); if(m) return {lat:+m[1],lng:+m[2],en:v,zh:v};
   const groups=localSuggest(v,field), first=groups.flatMap(g=>g.items)[0];   // best local match (station, exit, shelter…)
-  if(first && first.lat) return first;
+  if(first && first.lat && (first.kind==="exit" || (first.obj && matchScore(first.obj,norm(v))===0))) return first;
   return await resolvePlace(v);
 }
 function setBusy(b){const btn=$("tripForm").querySelector('button[type=submit]');btn.disabled=b;btn.textContent=b?t("finding"):t("go");btn.style.opacity=b?.75:1}
