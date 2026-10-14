@@ -3,7 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Cool HK</title>
+<title>Cool HK 清涼香港</title>
+<meta name="description" content="Cool HK finds shaded walking routes in Hong Kong: covered walkways, footbridges, malls and cool shelters, with live Observatory weather.">
+<meta name="theme-color" content="#0f7c8c">
+<meta property="og:title" content="Cool HK 清涼香港 – walk in the shade">
+<meta property="og:description" content="Shaded walking routes and cool shelters in Hong Kong.">
+<meta property="og:image" content="https://coolhkapp.github.io/icon-512.png">
+<meta property="og:url" content="https://coolhkapp.github.io/">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Cool HK">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@500;600&display=swap">
 <link rel="stylesheet" href="https://js.arcgis.com/4.31/esri/themes/light/main.css">
@@ -176,6 +187,7 @@ select{width:100%;margin-top:6px;padding:9px;border:1px solid var(--line);border
 .row.plain{grid-template-columns:1fr auto;padding-left:12px}
 #routeLegend:not(.has-route) .rl{display:none}
 .legend .lgnote{flex-basis:100%;font-weight:600;color:var(--ink)}
+#tripNote a{color:var(--cool);font-weight:700}
 .handoff{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .handoff .btn{text-align:center;text-decoration:none}
 .row .band{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:1px}
@@ -252,6 +264,7 @@ body.framed-bg{background:#cfd8db}
             <button class="btn" type="submit" style="grid-column:1/-1" data-i18n="go">Find shaded route</button>
           </form>
           <div class="status" id="status"></div>
+          <div class="alert" id="tripNote" hidden></div>
           <div class="handoff" id="handoff" hidden>
             <a class="btn ghost small" id="gmapsLink" href="#" target="_blank" rel="noopener" data-i18n="openGmaps">Google Maps</a>
             <a class="btn ghost small" id="amapsLink" href="#" target="_blank" rel="noopener" data-i18n="openAmaps">Apple Maps</a>
@@ -461,7 +474,7 @@ const CONFIG = {
 // LANGUAGE
 // =====================================================================
 const T = {
- en:{lgNote:"Route colours show what shades each part:",finding:"Finding route…",cancel:"Cancel",pinned:"Pinned point on map",loadingMap:"Loading map…",clear:"Clear",rhLbl:"RH",nearStart:"Cool shelters near your start",kC:"Covered walkway",kB:"Footbridge (usually covered)",kU:"Subway / underpass",kI:"Indoor corridor",kT:"Tree-lined street",kM:"Shopping mall (indoor, air-con)",kUnnamed:"Unnamed section",lgIndoor:"Subway / indoor / mall",loadingShade:"Loading covered walkways and malls…",routingShade:"Comparing routes through footbridges, subways and malls…",shadeSample:" Real shade data could not load, so sample walkways were used.",swap:"Swap start and destination",lgRShade:"Route in shade",lgRSun:"Route in the sun",segShade:"In the shade",segSun:"In the sun",bestRoute:"Best route (shadiest and fastest)",shelOnWay:"Air-conditioned shelter on the way",setAbout:"About & credits",crData:"Data, maps & services",crCourse:"Course & project materials",aboutTxt:"Cool HK is a student group project for GEOG2147 Build Smart Cities with GIS (HKU). Routes are suggestions only: follow road signs and the Observatory's heat advice.",sampleStartLbl:"Victoria Park (sample start)",tabPublic:"Public · Free",tabPremium:"Premium",pubTitle:"Walk in the shade",pubHint:"Type where you're going. Leave the start empty to use your current location.",
+ en:{ferryNote:"This route includes a ferry crossing, which the walking time includes.",longWalk:m=>`This is a long walk (about ${m}). In hot weather, take the MTR or a bus for most of it.`,transitLink:"Public transport options",outsideHK:"Cool HK covers Hong Kong only. Choose a start and destination in Hong Kong.",geoOutside:"Your location seems to be outside Hong Kong, so a sample start in Hong Kong is used.",lgNote:"Route colours show what shades each part:",finding:"Finding route…",cancel:"Cancel",pinned:"Pinned point on map",loadingMap:"Loading map…",clear:"Clear",rhLbl:"RH",nearStart:"Cool shelters near your start",kC:"Covered walkway",kB:"Footbridge (usually covered)",kU:"Subway / underpass",kI:"Indoor corridor",kT:"Tree-lined street",kM:"Shopping mall (indoor, air-con)",kUnnamed:"Unnamed section",lgIndoor:"Subway / indoor / mall",loadingShade:"Loading covered walkways and malls…",routingShade:"Comparing routes through footbridges, subways and malls…",shadeSample:" Real shade data could not load, so sample walkways were used.",swap:"Swap start and destination",lgRShade:"Route in shade",lgRSun:"Route in the sun",segShade:"In the shade",segSun:"In the sun",bestRoute:"Best route (shadiest and fastest)",shelOnWay:"Air-conditioned shelter on the way",setAbout:"About & credits",crData:"Data, maps & services",crCourse:"Course & project materials",aboutTxt:"Cool HK is a student group project for GEOG2147 Build Smart Cities with GIS (HKU). Routes are suggestions only: follow road signs and the Observatory's heat advice.",sampleStartLbl:"Victoria Park (sample start)",tabPublic:"Public · Free",tabPremium:"Premium",pubTitle:"Walk in the shade",pubHint:"Type where you're going. Leave the start empty to use your current location.",
   startPh:"My current location",destPh:"Nearest cool shelter",pick:"Pick start point on map",go:"Find shaded route",mostShaded:"Most shaded",fastest:"Fastest",
   shadeOnRoute:"Shade on this route",otherShelters:"Other cool shelters nearby",lgCovered:"Covered walkway / footbridge",lgTrees:"Tree-lined street",lgShelter:"Cool shelter (air-con)",
   premFor:"For government departments & NGOs",plansTitle:"Choose a Premium plan",plansHint:"The public app stays free. Premium plans pay for heat-vulnerability analytics and services. Prices are proposals for the demo.",
@@ -498,7 +511,7 @@ const T = {
   hdrMtr:"MTR stations",hdrExits:"Station exits",hdrPlaces:"Places",hdrSearch:"Addresses & places",exit:"Exit",stCentre:"Station centre",chooseExit:"Exit:",
   exitsLoading:"Loading exits…",exitsNone:"Exit locations need an internet connection.",stSuf:" Station",exitLabel:(st,r)=>`${st} Station · Exit ${r}`,
   linesLbl:"Lines",exitsLbl:"Exits",typeShelter:"Cool shelter",typeArea:"Neighbourhood",noSugg:"No matches yet. Keep typing or press Find.",hdrAddr:"Addresses",hdrGoogle:"Google Maps places",srcALS:"Address",srcGeo:"HK GeoInfo Map",openGmaps:"Walk it in Google Maps",openAmaps:"Walk it in Apple Maps",atShelter:(a,b)=>`You are already at ${a}, so the route goes to the next nearest cool shelter, ${b}.`,samePlace:"Start and destination are the same place. Choose a different destination.",settings:"Settings",setLang:"Language",setView:"View",setMap:"Map type",setLayers:"Show on map",vAuto:"Auto",vPhone:"Phone",vDesk:"Computer",pMtr:"MTR lines & stations",pShade:"Covered walkways & shade",pShel:"Cool shelters"},
- zh:{lgNote:"路線顏色代表每段的遮蔭類型：",finding:"搜尋路線中…",cancel:"取消",pinned:"地圖上選取的位置",loadingMap:"地圖載入中…",clear:"清除",rhLbl:"濕度",nearStart:"起點附近的避暑點",kC:"有蓋行人路",kB:"行人天橋（多數有蓋）",kU:"行人隧道／地下通道",kI:"室內通道",kT:"林蔭街道",kM:"商場（室內有冷氣）",kUnnamed:"未命名路段",lgIndoor:"隧道／室內／商場",loadingShade:"正在載入有蓋通道及商場資料…",routingShade:"正在比較經天橋、隧道及商場的路線…",shadeSample:" 未能載入真實遮蔭數據，暫用示範通道。",swap:"對調起點及目的地",lgRShade:"路線：有遮蔭",lgRSun:"路線：曬太陽",segShade:"有遮蔭",segSun:"曬太陽",bestRoute:"最佳路線（最陰涼亦最快）",shelOnWay:"沿途有冷氣避暑點",setAbout:"關於及資料來源",crData:"數據、地圖及服務",crCourse:"課程及專題資料",aboutTxt:"清涼香港是香港大學 GEOG2147「以 GIS 建設智慧城市」的學生小組專題。路線只供參考，請留意路牌及天文台的酷熱天氣提示。",sampleStartLbl:"維多利亞公園（示範起點）",tabPublic:"公眾版 · 免費",tabPremium:"進階版",pubTitle:"行陰涼路線",pubHint:"輸入目的地。起點留空即使用你目前的位置。",
+ zh:{ferryNote:"此路線包括渡輪航程，步行時間已計算在內。",longWalk:m=>`這段路程頗長（約 ${m}）。天氣炎熱時，建議大部分路程乘搭港鐵或巴士。`,transitLink:"查看公共交通",outsideHK:"清涼香港只涵蓋香港，請選擇香港境內的起點及目的地。",geoOutside:"你的位置似乎不在香港，因此改用香港的示範起點。",lgNote:"路線顏色代表每段的遮蔭類型：",finding:"搜尋路線中…",cancel:"取消",pinned:"地圖上選取的位置",loadingMap:"地圖載入中…",clear:"清除",rhLbl:"濕度",nearStart:"起點附近的避暑點",kC:"有蓋行人路",kB:"行人天橋（多數有蓋）",kU:"行人隧道／地下通道",kI:"室內通道",kT:"林蔭街道",kM:"商場（室內有冷氣）",kUnnamed:"未命名路段",lgIndoor:"隧道／室內／商場",loadingShade:"正在載入有蓋通道及商場資料…",routingShade:"正在比較經天橋、隧道及商場的路線…",shadeSample:" 未能載入真實遮蔭數據，暫用示範通道。",swap:"對調起點及目的地",lgRShade:"路線：有遮蔭",lgRSun:"路線：曬太陽",segShade:"有遮蔭",segSun:"曬太陽",bestRoute:"最佳路線（最陰涼亦最快）",shelOnWay:"沿途有冷氣避暑點",setAbout:"關於及資料來源",crData:"數據、地圖及服務",crCourse:"課程及專題資料",aboutTxt:"清涼香港是香港大學 GEOG2147「以 GIS 建設智慧城市」的學生小組專題。路線只供參考，請留意路牌及天文台的酷熱天氣提示。",sampleStartLbl:"維多利亞公園（示範起點）",tabPublic:"公眾版 · 免費",tabPremium:"進階版",pubTitle:"行陰涼路線",pubHint:"輸入目的地。起點留空即使用你目前的位置。",
   startPh:"我目前的位置",destPh:"最近的避暑點",pick:"在地圖上揀起點",go:"搵最陰涼路線",mostShaded:"最陰涼",fastest:"最快",
   shadeOnRoute:"路線上的遮蔭",otherShelters:"附近其他避暑點",lgCovered:"有蓋行人通道／天橋",lgTrees:"林蔭街道",lgShelter:"避暑點（有冷氣）",
   premFor:"適用於政府部門及非政府機構",plansTitle:"選擇進階版計劃",plansHint:"公眾版永遠免費。進階版計劃收費提供熱風險分析及服務。價錢為示範用建議。",
@@ -668,6 +681,10 @@ const WALK=80, DETOUR=1.3;
 const HK_BOX={xmin:113.82,ymin:22.13,xmax:114.45,ymax:22.58};
 const mercX=lng=>lng*20037508.34/180, mercY=lat=>Math.log(Math.tan((90+lat)*Math.PI/360))*20037508.34/Math.PI;
 const HK_MERC={xmin:mercX(HK_BOX.xmin),ymin:mercY(HK_BOX.ymin),xmax:mercX(HK_BOX.xmax),ymax:mercY(HK_BOX.ymax)};
+// rough Hong Kong boundary: inside the HK box and south of the Shenzhen River / Deep Bay line
+const HK_NORTH=[[113.80,22.40],[113.95,22.46],[114.00,22.50],[114.03,22.51],[114.06,22.525],[114.09,22.535],[114.12,22.535],[114.15,22.55],[114.19,22.56],[114.23,22.56],[114.50,22.56]];
+function inHK(lat,lng){ if(lng<HK_BOX.xmin-.05||lng>HK_BOX.xmax+.05||lat<HK_BOX.ymin-.03||lat>HK_BOX.ymax) return false;
+  for(let i=0;i<HK_NORTH.length-1;i++){const[a,b]=HK_NORTH[i],[c,d]=HK_NORTH[i+1];if(lng>=a&&lng<=c)return lat<=b+(d-b)*(lng-a)/(c-a)} return true; }
 const LAT0=22.32, KX=111320*Math.cos(LAT0*Math.PI/180), KY=110540;
 const xy=(la,ln)=>[ln*KX,la*KY];
 const dist=(a,b)=>{const[x1,y1]=xy(a[0],a[1]),[x2,y2]=xy(b[0],b[1]);return Math.hypot(x2-x1,y2-y1)};
@@ -1372,7 +1389,7 @@ async function pointFrom(field){
   return await resolvePlace(v);
 }
 // when a search fails, take the previous trip off the screen so it isn't mistaken for the answer
-function clearRoute(){ routes={}; if(layers.route) layers.route.removeAll(); ["routes","shadeBox","nearBox","handoff"].forEach(id=>$(id).hidden=true); $("routeLegend").classList.remove("has-route"); mtrFade(); }
+function clearRoute(){ routes={}; if(layers.route) layers.route.removeAll(); ["routes","shadeBox","nearBox","handoff","tripNote"].forEach(id=>$(id).hidden=true); $("routeLegend").classList.remove("has-route"); mtrFade(); }
 function setBusy(b){const btn=$("tripForm").querySelector('button[type=submit]');btn.disabled=b;btn.textContent=b?t("finding"):t("go");btn.style.opacity=b?.75:1}
 async function findRoute(){ setBusy(true); try{ await findRoute0(); } finally{ setBusy(false); } }
 async function findRoute0(){
@@ -1380,12 +1397,13 @@ async function findRoute0(){
   st.textContent=t("searching");
   // start: typed / chosen place, otherwise current location
   if($("startIn").value.trim()){ const p=await pointFrom("start"); if(!p){st.textContent=t("notFound",$("startIn").value);toast(st.textContent);clearRoute();return} startPoint=p; }
-  else { st.textContent=t("locating"); const p=await currentLocation(); if(p) startPoint=p; else { startPoint=SAMPLE_START; const si=$("startIn"); si.value=t("sampleStartLbl"); si._sel={...SAMPLE_START,label:si.value}; toast(t("noGeo")); } }
+  else { st.textContent=t("locating"); let p=await currentLocation(); if(p&&!inHK(p.lat,p.lng)){ p=null; toast(t("geoOutside")); } if(p) startPoint=p; else { startPoint=SAMPLE_START; const si=$("startIn"); si.value=t("sampleStartLbl"); si._sel={...SAMPLE_START,label:si.value}; toast(t("noGeo")); } }
   // destination: typed / chosen place, otherwise nearest cool shelter
   if($("destIn").value.trim()){ const p=await pointFrom("dest"); if(!p){st.textContent=t("notFound",$("destIn").value);toast(st.textContent);clearRoute();return} destPoint=p; }
   else { const ns=nearestShelters([startPoint.lat,startPoint.lng],3); const away=ns.find(x=>x.d>150);
     destPoint=(away||ns[0]).s; if(ns[0].d<=150&&away) toast(t("atShelter",nm(ns[0].s),nm(destPoint))); }
   if(id!==reqId) return;
+  if(!inHK(startPoint.lat,startPoint.lng)||!inHK(destPoint.lat,destPoint.lng)){ st.textContent=t("outsideHK"); toast(t("outsideHK")); clearRoute(); return; }
   if(dist([startPoint.lat,startPoint.lng],[destPoint.lat,destPoint.lng])<30){ st.textContent=t("samePlace"); toast(t("samePlace")); clearRoute(); return; }
   renderWeather([startPoint.lat,startPoint.lng]);
   drawSelExits();
@@ -1394,9 +1412,11 @@ async function findRoute0(){
 async function osrm(points,alts){
   const q=points.map(p=>`${p[1]},${p[0]}`).join(";"), ctl=new AbortController(), tm=setTimeout(()=>ctl.abort(),12000);
   try{
-    const j=await fetch(`https://routing.openstreetmap.de/routed-foot/route/v1/foot/${q}?overview=full&geometries=geojson${alts?"&alternatives=2":""}`,{signal:ctl.signal}).then(r=>r.json());
+    const j=await fetch(`https://routing.openstreetmap.de/routed-foot/route/v1/foot/${q}?overview=full&steps=true&geometries=geojson${alts?"&alternatives=2":""}`,{signal:ctl.signal}).then(r=>r.json());
     if(!j.routes||!j.routes.length) throw new Error("no route");
-    return j.routes.map(rt=>({coords:rt.geometry.coordinates.map(([x,y])=>[y,x]),meters:rt.distance,live:true}));
+    // the walking router may include a ferry (e.g. Star Ferry across the harbour): remember how much
+    return j.routes.map(rt=>({coords:rt.geometry.coordinates.map(([x,y])=>[y,x]),meters:rt.distance,live:true,
+      ferry:rt.legs.reduce((s,l)=>s+l.steps.filter(st=>st.mode==="ferry").reduce((a,st)=>a+st.distance,0),0)}));
   } finally { clearTimeout(tm); }
 }
 function straight(points){
@@ -1474,6 +1494,11 @@ function renderRoutes(zoom){
   layers.route.add(dot(destPoint.lat,destPoint.lng,css("--cool"),18,{title:nm(destPoint),content:destPoint.type?t("freeAccess"):""},"#132a33"));
   $("routeLegend").classList.add("has-route"); mtrFade(); applyPrefs(); if(zoom) view.goTo({target:g.geometry.extent.clone().expand(1.6)}).catch(()=>{});
   $("routes").hidden=false; fmtCard(shade,"sh"); fmtCard(fast,"fa");
+  // long walks and ferry crossings: say so, and offer public transport
+  const notes=[], fmin=Math.round(fast.meters/WALK);
+  if(fast.ferry>200) notes.push(t("ferryNote"));
+  if(fmin>40) notes.push(t("longWalk",fmin>=60?`${Math.floor(fmin/60)} h ${fmin%60} ${t("min")}`:`${fmin} ${t("min")}`)+` <a href="https://www.google.com/maps/dir/?api=1&origin=${startPoint.lat},${startPoint.lng}&destination=${destPoint.lat},${destPoint.lng}&travelmode=transit" target="_blank" rel="noopener">${t("transitLink")}</a>`);
+  $("tripNote").innerHTML=notes.join("<br>"); $("tripNote").hidden=!notes.length;
   const gl=$("gmapsLink"); $("handoff").hidden=false;
   $("amapsLink").href=`https://maps.apple.com/?saddr=${startPoint.lat},${startPoint.lng}&daddr=${destPoint.lat},${destPoint.lng}&dirflg=w`;
   gl.href=`https://www.google.com/maps/dir/?api=1&origin=${startPoint.lat},${startPoint.lng}&destination=${destPoint.lat},${destPoint.lng}&travelmode=walking`;
