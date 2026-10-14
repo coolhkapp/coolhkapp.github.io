@@ -176,6 +176,8 @@ select{width:100%;margin-top:6px;padding:9px;border:1px solid var(--line);border
 .row.plain{grid-template-columns:1fr auto;padding-left:12px}
 #routeLegend:not(.has-route) .rl{display:none}
 .legend .lgnote{flex-basis:100%;font-weight:600;color:var(--ink)}
+.handoff{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.handoff .btn{text-align:center;text-decoration:none}
 .row .band{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:1px}
 .toast{position:absolute;left:50%;transform:translateX(-50%);bottom:24px;background:var(--ink);color:var(--panel);padding:8px 14px;border-radius:999px;font-size:13px;z-index:20;opacity:0;pointer-events:none;transition:opacity .2s}
 .toast.on{opacity:1}
@@ -250,7 +252,10 @@ body.framed-bg{background:#cfd8db}
             <button class="btn" type="submit" style="grid-column:1/-1" data-i18n="go">Find shaded route</button>
           </form>
           <div class="status" id="status"></div>
-          <a class="btn ghost small" id="gmapsLink" href="#" target="_blank" rel="noopener" hidden style="text-align:center;text-decoration:none" data-i18n="openGmaps">Open walking directions in Google Maps</a>
+          <div class="handoff" id="handoff" hidden>
+            <a class="btn ghost small" id="gmapsLink" href="#" target="_blank" rel="noopener" data-i18n="openGmaps">Google Maps</a>
+            <a class="btn ghost small" id="amapsLink" href="#" target="_blank" rel="noopener" data-i18n="openAmaps">Apple Maps</a>
+          </div>
           <div class="routes" id="routes" hidden>
             <button class="rcard" id="rcShade" aria-pressed="true">
               <span class="k" style="color:var(--rshade)" data-i18n="mostShaded">Most shaded</span>
@@ -492,7 +497,7 @@ const T = {
   lgMtr:"MTR line & station",useMyLoc:"Use my current location",nearestOpt:"Nearest cool shelter",hdrNearMtr:"Nearby MTR stations",hdrNearShel:"Nearby cool shelters",
   hdrMtr:"MTR stations",hdrExits:"Station exits",hdrPlaces:"Places",hdrSearch:"Addresses & places",exit:"Exit",stCentre:"Station centre",chooseExit:"Exit:",
   exitsLoading:"Loading exits…",exitsNone:"Exit locations need an internet connection.",stSuf:" Station",exitLabel:(st,r)=>`${st} Station · Exit ${r}`,
-  linesLbl:"Lines",exitsLbl:"Exits",typeShelter:"Cool shelter",typeArea:"Neighbourhood",noSugg:"No matches yet. Keep typing or press Find.",hdrAddr:"Addresses",hdrGoogle:"Google Maps places",srcALS:"Address",srcGeo:"HK GeoInfo Map",openGmaps:"Open walking directions in Google Maps",settings:"Settings",setLang:"Language",setView:"View",setMap:"Map type",setLayers:"Show on map",vAuto:"Auto",vPhone:"Phone",vDesk:"Computer",pMtr:"MTR lines & stations",pShade:"Covered walkways & shade",pShel:"Cool shelters"},
+  linesLbl:"Lines",exitsLbl:"Exits",typeShelter:"Cool shelter",typeArea:"Neighbourhood",noSugg:"No matches yet. Keep typing or press Find.",hdrAddr:"Addresses",hdrGoogle:"Google Maps places",srcALS:"Address",srcGeo:"HK GeoInfo Map",openGmaps:"Walk it in Google Maps",openAmaps:"Walk it in Apple Maps",atShelter:(a,b)=>`You are already at ${a}, so the route goes to the next nearest cool shelter, ${b}.`,samePlace:"Start and destination are the same place. Choose a different destination.",settings:"Settings",setLang:"Language",setView:"View",setMap:"Map type",setLayers:"Show on map",vAuto:"Auto",vPhone:"Phone",vDesk:"Computer",pMtr:"MTR lines & stations",pShade:"Covered walkways & shade",pShel:"Cool shelters"},
  zh:{lgNote:"路線顏色代表每段的遮蔭類型：",finding:"搜尋路線中…",cancel:"取消",pinned:"地圖上選取的位置",loadingMap:"地圖載入中…",clear:"清除",rhLbl:"濕度",nearStart:"起點附近的避暑點",kC:"有蓋行人路",kB:"行人天橋（多數有蓋）",kU:"行人隧道／地下通道",kI:"室內通道",kT:"林蔭街道",kM:"商場（室內有冷氣）",kUnnamed:"未命名路段",lgIndoor:"隧道／室內／商場",loadingShade:"正在載入有蓋通道及商場資料…",routingShade:"正在比較經天橋、隧道及商場的路線…",shadeSample:" 未能載入真實遮蔭數據，暫用示範通道。",swap:"對調起點及目的地",lgRShade:"路線：有遮蔭",lgRSun:"路線：曬太陽",segShade:"有遮蔭",segSun:"曬太陽",bestRoute:"最佳路線（最陰涼亦最快）",shelOnWay:"沿途有冷氣避暑點",setAbout:"關於及資料來源",crData:"數據、地圖及服務",crCourse:"課程及專題資料",aboutTxt:"清涼香港是香港大學 GEOG2147「以 GIS 建設智慧城市」的學生小組專題。路線只供參考，請留意路牌及天文台的酷熱天氣提示。",sampleStartLbl:"維多利亞公園（示範起點）",tabPublic:"公眾版 · 免費",tabPremium:"進階版",pubTitle:"行陰涼路線",pubHint:"輸入目的地。起點留空即使用你目前的位置。",
   startPh:"我目前的位置",destPh:"最近的避暑點",pick:"在地圖上揀起點",go:"搵最陰涼路線",mostShaded:"最陰涼",fastest:"最快",
   shadeOnRoute:"路線上的遮蔭",otherShelters:"附近其他避暑點",lgCovered:"有蓋行人通道／天橋",lgTrees:"林蔭街道",lgShelter:"避暑點（有冷氣）",
@@ -529,7 +534,7 @@ const T = {
   lgMtr:"港鐵綫及車站",useMyLoc:"使用我目前的位置",nearestOpt:"最近的避暑點",hdrNearMtr:"附近港鐵站",hdrNearShel:"附近避暑點",
   hdrMtr:"港鐵站",hdrExits:"車站出口",hdrPlaces:"地點",hdrSearch:"地址及地點",exit:"出口",stCentre:"車站中心",chooseExit:"出口：",
   exitsLoading:"正在載入出口…",exitsNone:"需要上網才能顯示出口位置。",stSuf:"站",exitLabel:(st,r)=>`${st}站 ${r} 出口`,
-  linesLbl:"路綫",exitsLbl:"出口",typeShelter:"避暑點",typeArea:"社區",noSugg:"暫時未有結果，繼續輸入或按「搵最陰涼路線」。",hdrAddr:"地址",hdrGoogle:"Google 地圖地點",srcALS:"地址",srcGeo:"地理資訊地圖",openGmaps:"在 Google 地圖開啟步行路線",settings:"設定",setLang:"語言",setView:"顯示模式",setMap:"地圖類型",setLayers:"地圖顯示",vAuto:"自動",vPhone:"手機版",vDesk:"電腦版",pMtr:"港鐵綫及車站",pShade:"有蓋通道及遮蔭",pShel:"避暑點"}
+  linesLbl:"路綫",exitsLbl:"出口",typeShelter:"避暑點",typeArea:"社區",noSugg:"暫時未有結果，繼續輸入或按「搵最陰涼路線」。",hdrAddr:"地址",hdrGoogle:"Google 地圖地點",srcALS:"地址",srcGeo:"地理資訊地圖",openGmaps:"用 Google 地圖步行",openAmaps:"用 Apple 地圖步行",atShelter:(a,b)=>`你已經在${a}，路線改為前往下一個最近的避暑點：${b}。`,samePlace:"起點與目的地相同，請選擇另一個目的地。",settings:"設定",setLang:"語言",setView:"顯示模式",setMap:"地圖類型",setLayers:"地圖顯示",vAuto:"自動",vPhone:"手機版",vDesk:"電腦版",pMtr:"港鐵綫及車站",pShade:"有蓋通道及遮蔭",pShel:"避暑點"}
 };
 let lang = "en"; try{ lang = localStorage.getItem("coolhk-lang") || "en"; }catch(e){}
 const t = (k,...a) => { const v = T[lang][k] ?? T.en[k]; return typeof v==="function" ? v(...a) : v; };
@@ -954,8 +959,10 @@ async function loadWeather(){
     const temps={}; now.temperature.data.forEach(d=>temps[d.place]=d.value);
     const rhHQ = now.humidity.data[0].value; let rh={};
     try{ // regional relative humidity (1-minute readings per station)
-      const csv=await fetch("https://data.weather.gov.hk/weatherAPI/hko_data/regional-weather/latest_1min_humidity.csv").then(r=>r.text());
-      csv.trim().split(/\r?\n/).slice(1).forEach(l=>{const c=l.split(",");const v=parseFloat(c[2]);if(c[1]&&!isNaN(v))rh[c[1].trim()]=v});
+      // the Observatory's CSV can't be read directly by browsers (no CORS), so use the copy archived every 10 min on DATA.GOV.HK
+      const hkt=new Date(Date.now()+8*3600e3-15*60e3).toISOString(), tm=hkt.slice(0,10).replace(/-/g,"")+"-"+hkt.slice(11,13)+hkt.slice(14,15)+"0";
+      const csv=await fetch("https://api.data.gov.hk/v1/historical-archive/get-file?url="+encodeURIComponent("https://data.weather.gov.hk/weatherAPI/hko_data/regional-weather/latest_1min_humidity.csv")+"&time="+tm).then(r=>{if(!r.ok)throw 0;return r.text()});
+      csv.trim().split(/\r?\n/).slice(1).forEach(l=>{const c=l.split(",");const v=parseFloat(c[2]);if(c[1]&&!isNaN(v))rh[c[1].trim().replace(/^HK /,"Hong Kong ")]=v});
     }catch(e){}
     const code=warn.WHOT&&warn.WHOT.code;
     WX={temps,rh,rhHQ,warn:code==="VHOT"?"vhot":code==="HOT"?"hot":"",live:true};
@@ -1364,18 +1371,22 @@ async function pointFrom(field){
   if(first && first.lat && (first.kind==="exit" || (first.obj && matchScore(first.obj,norm(v))===0))) return first;
   return await resolvePlace(v);
 }
+// when a search fails, take the previous trip off the screen so it isn't mistaken for the answer
+function clearRoute(){ routes={}; if(layers.route) layers.route.removeAll(); ["routes","shadeBox","nearBox","handoff"].forEach(id=>$(id).hidden=true); $("routeLegend").classList.remove("has-route"); mtrFade(); }
 function setBusy(b){const btn=$("tripForm").querySelector('button[type=submit]');btn.disabled=b;btn.textContent=b?t("finding"):t("go");btn.style.opacity=b?.75:1}
 async function findRoute(){ setBusy(true); try{ await findRoute0(); } finally{ setBusy(false); } }
 async function findRoute0(){
   const st=$("status"); const id=++reqId;
   st.textContent=t("searching");
   // start: typed / chosen place, otherwise current location
-  if($("startIn").value.trim()){ const p=await pointFrom("start"); if(!p){st.textContent=t("notFound",$("startIn").value);toast(st.textContent);return} startPoint=p; }
+  if($("startIn").value.trim()){ const p=await pointFrom("start"); if(!p){st.textContent=t("notFound",$("startIn").value);toast(st.textContent);clearRoute();return} startPoint=p; }
   else { st.textContent=t("locating"); const p=await currentLocation(); if(p) startPoint=p; else { startPoint=SAMPLE_START; const si=$("startIn"); si.value=t("sampleStartLbl"); si._sel={...SAMPLE_START,label:si.value}; toast(t("noGeo")); } }
   // destination: typed / chosen place, otherwise nearest cool shelter
-  if($("destIn").value.trim()){ const p=await pointFrom("dest"); if(!p){st.textContent=t("notFound",$("destIn").value);toast(st.textContent);return} destPoint=p; }
-  else destPoint=nearestShelters([startPoint.lat,startPoint.lng])[0].s;
+  if($("destIn").value.trim()){ const p=await pointFrom("dest"); if(!p){st.textContent=t("notFound",$("destIn").value);toast(st.textContent);clearRoute();return} destPoint=p; }
+  else { const ns=nearestShelters([startPoint.lat,startPoint.lng],3); const away=ns.find(x=>x.d>150);
+    destPoint=(away||ns[0]).s; if(ns[0].d<=150&&away) toast(t("atShelter",nm(ns[0].s),nm(destPoint))); }
   if(id!==reqId) return;
+  if(dist([startPoint.lat,startPoint.lng],[destPoint.lat,destPoint.lng])<30){ st.textContent=t("samePlace"); toast(t("samePlace")); clearRoute(); return; }
   renderWeather([startPoint.lat,startPoint.lng]);
   drawSelExits();
   await plan(id);
@@ -1463,7 +1474,8 @@ function renderRoutes(zoom){
   layers.route.add(dot(destPoint.lat,destPoint.lng,css("--cool"),18,{title:nm(destPoint),content:destPoint.type?t("freeAccess"):""},"#132a33"));
   $("routeLegend").classList.add("has-route"); mtrFade(); applyPrefs(); if(zoom) view.goTo({target:g.geometry.extent.clone().expand(1.6)}).catch(()=>{});
   $("routes").hidden=false; fmtCard(shade,"sh"); fmtCard(fast,"fa");
-  const gl=$("gmapsLink"); gl.hidden=false;
+  const gl=$("gmapsLink"); $("handoff").hidden=false;
+  $("amapsLink").href=`https://maps.apple.com/?saddr=${startPoint.lat},${startPoint.lng}&daddr=${destPoint.lat},${destPoint.lng}&dirflg=w`;
   gl.href=`https://www.google.com/maps/dir/?api=1&origin=${startPoint.lat},${startPoint.lng}&destination=${destPoint.lat},${destPoint.lng}&travelmode=walking`;
   $("rcShade").setAttribute("aria-pressed",chosen==="shade"); $("rcFast").setAttribute("aria-pressed",chosen==="fast");
   const same=shade===fast; $("routes").classList.toggle("same",same);
@@ -1472,7 +1484,7 @@ function renderRoutes(zoom){
   $("status").textContent=(same?(fast.stats.pct>0?t("sameRoute"):t("noShade")):t("shadeBetter",Math.max(0,extra).toFixed(0),Math.max(0,saved).toFixed(0)))+(main.live?"":t("offline"))+(routes.note||"");
   const used=main.stats.used, shel=(main.stats.shel||[]).filter(k=>dist([SHELTERS[k].lat,SHELTERS[k].lng],[destPoint.lat,destPoint.lng])>30); $("shadeBox").hidden=false;
   $("shadeList").innerHTML=(shadeGroups(used,main.stats.um).length||shel.length)?shel.map(k=>`<li><button class="row plain" data-c="${k}"><span><span class="name">${nm(SHELTERS[k])}</span><br><span class="sub">${t("shelOnWay")}</span></span><span class="num"></span></button></li>`).join("")+shadeGroups(used,main.stats.um).map((g,gi)=>`<li><button class="row plain" data-g="${gi}"><span><span class="name">${g.name}</span>${g.sub?`<br><span class="sub">${g.sub}</span>`:""}</span><span class="num">${g.m>=20?"~"+Math.round(g.m/10)*10+" m":""}</span></button></li>`).join(""):`<li class="hint">${t("noShadeList")}</li>`;
-  const near=nearestShelters([startPoint.lat,startPoint.lng],4).filter(x=>x.s!==destPoint).slice(0,3);
+  const near=nearestShelters([startPoint.lat,startPoint.lng],5).filter(x=>x.s!==destPoint&&x.d>50&&dist([x.s.lat,x.s.lng],[destPoint.lat,destPoint.lng])>30).slice(0,3);
   $("nearBox").hidden=false;
   $("nearList").innerHTML=near.map(({s,d})=>`<li><button class="row plain" data-n="${SHELTERS.indexOf(s)}"><span><span class="name">${nm(s)}</span><br><span class="sub">${lang==="zh"?TYPE[s.type]:s.type} · ${lang==="zh"?D[s.dist]:s.dist}</span></span><span class="num">~${walkMin(d).toFixed(0)} ${t("min")}</span></button></li>`).join("");
 }
@@ -1590,6 +1602,8 @@ async function autoRoute(){ if(autoTried) return; autoTried=true;
   b.onclick=()=>{inp.value="";inp._sel=null;renderExitRow(f,null);upd();inp.focus();inp.dispatchEvent(new Event("input",{bubbles:true}))}});
 applyLayout(); applyLang();
 loadWeather().then(()=>renderWeather());
+setInterval(()=>{ if(!document.hidden) loadWeather().then(()=>renderWeather()); },10*60*1000); // refresh every 10 minutes
+loadShadeData(); // start downloading shade data straight away (don't wait for the map)
 loadExits();
 </script>
 </body>
