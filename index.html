@@ -384,8 +384,8 @@ body.framed-bg{background:#cfd8db}
               </div>
             </div>
             <div class="legend">
-              <span><i style="background:var(--ok)"></i>≤ 5 min</span>
-              <span><i style="background:var(--warn)"></i>5–10 min</span>
+              <span><i style="background:var(--ok)"></i><span data-i18n="lgWalk5">≤ 5 min</span></span>
+              <span><i style="background:var(--warn)"></i><span data-i18n="lgWalk10">5–10 min</span></span>
               <span><i style="background:var(--heat)"></i><span data-i18n="lgDesert">&gt; 10 min (desert)</span></span>
             </div>
             <div>
@@ -488,7 +488,7 @@ const T = {
   addonsTitle:"Paid add-on services",ad1:"Custom district heat report",ad2:"Staff training workshop (half day)",ad3:"Data API for your own systems",
   managePlan:"Change plan",dashTitle:"Cool Island Deserts",dashHint:"Neighbourhoods more than a 10-minute walk from any cool shelter.",district:"District",group:"At-risk group",g65:"Aged 65+",g15:"Under 15",gBoth:"Both",
   stShel:"cool shelters",stOut:"at-risk people outside 10 min",stDes:"desert areas",layers:"Map layers",lyCatch:"5 / 10-min walk catchments",lyLst:"Surface heat hotspots (Landsat)",lyShade:"Covered walkways",lyDemand:"Public app demand (anonymised)",
-  lgDesert:"> 10 min (desert)",deployTitle:"Where to deploy this week",rankTitle:"All neighbourhoods by priority",rankHint:"Score = at-risk people × walking minutes × surface heat. Tap to zoom.",
+  lgDesert:"> 10 min (desert)",lgWalk5:"≤ 5 min",lgWalk10:"5–10 min",deployTitle:"Where to deploy this week",rankTitle:"All neighbourhoods by priority",rankHint:"Score = at-risk people × walking minutes × surface heat. Tap to zoom.",
   note:"Test build. Shade on routes uses real covered walkways, footbridges, subways, malls and tree rows from OpenStreetMap, which may be incomplete. The cool shelter list is approximate, and Premium population, surface temperature and demand figures are sample data.",
   bmHK:"HK Map",bmTopo:"Topographic",bmImg:"Imagery",navRoute:"Shaded route",navPrem:"Premium",
   layoutAuto:"Auto view",layoutPhone:"📱 Phone view",layoutDesk:"💻 Computer view",
@@ -525,7 +525,7 @@ const T = {
   addonsTitle:"額外付費服務",ad1:"度身訂造地區熱風險報告",ad2:"員工培訓工作坊（半日）",ad3:"數據 API 接駁你的系統",
   managePlan:"更改計劃",dashTitle:"「避暑沙漠」",dashHint:"步行往最近避暑點需時超過 10 分鐘的社區。",district:"地區",group:"高風險群組",g65:"65歲或以上",g15:"15歲以下",gBoth:"兩者",
   stShel:"避暑點",stOut:"10 分鐘範圍外的高風險人口",stDes:"避暑沙漠",layers:"地圖圖層",lyCatch:"5／10 分鐘步行範圍",lyLst:"地表熱點（Landsat）",lyShade:"有蓋行人通道",lyDemand:"公眾版需求（匿名）",
-  lgDesert:"> 10 分鐘（沙漠）",deployTitle:"本週建議部署位置",rankTitle:"所有社區優先次序",rankHint:"分數 = 高風險人口 × 步行分鐘 × 地表溫度。按一下放大。",
+  lgDesert:"> 10 分鐘（沙漠）",lgWalk5:"≤ 5 分鐘",lgWalk10:"5–10 分鐘",deployTitle:"本週建議部署位置",rankTitle:"所有社區優先次序",rankHint:"分數 = 高風險人口 × 步行分鐘 × 地表溫度。按一下放大。",
   note:"測試版。路線遮蔭使用 OpenStreetMap 的真實有蓋通道、天橋、隧道、商場及林蔭路數據，或有遺漏。避暑點位置為約數；進階版的人口、地表溫度及需求數字為示範數據。",
   bmHK:"香港地圖",bmTopo:"地形圖",bmImg:"衛星影像",navRoute:"陰涼路線",navPrem:"進階版",
   layoutAuto:"自動",layoutPhone:"📱 手機版",layoutDesk:"💻 電腦版",
@@ -924,7 +924,7 @@ function hk80ToWgs(E,N){
 // =====================================================================
 const $=id=>document.getElementById(id);
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-function toast(msg){const el=$("toast");el.textContent=msg;el.classList.add("on");clearTimeout(toast.h);toast.h=setTimeout(()=>el.classList.remove("on"),2600)}
+function toast(msg){const el=$("toast");el.textContent=msg;el.classList.add("on");clearTimeout(toast.h);toast.h=setTimeout(()=>el.classList.remove("on"),Math.min(6000,Math.max(2600,String(msg).length*(lang==="zh"?180:60))))}
 function applyLang(){
   document.documentElement.lang = lang==="zh"?"zh-Hant-HK":"en";
   document.querySelectorAll("[data-i18n]").forEach(el=>{el.textContent=t(el.dataset.i18n)});
@@ -1507,7 +1507,7 @@ function shadeGroups(used,um){ um=um||{};
     else { const s=SHADE[+ref.slice(1)]; name=nm(s); sub=shadeLabel(s.kind); key=name; col=shadeCol(s.kind); pts=s.pts; }
     const g=map.get(key)||{name,sub,col,pts:[],m:0}; g.pts=g.pts.concat(pts); g.m+=um[ref]||0; map.set(key,g);
   });
-  GROUPS=[...map.values()].filter(g=>g.m>=10).sort((x,y)=>y.m-x.m).slice(0,12);
+  GROUPS=[...map.values()].filter(g=>g.m>=20).sort((x,y)=>y.m-x.m).slice(0,12);
   return GROUPS;
 }
 function renderRoutes(zoom){
@@ -1535,6 +1535,7 @@ function renderRoutes(zoom){
   const notes=[], fmin=Math.round(fast.meters/WALK);
   if(!sunUp()) notes.push(t("nightNote"));
   if(fast.ferry>200) notes.push(t("ferryNote"));
+  { const ds=SHELTERS.find(s=>s.lat===destPoint.lat&&s.lng===destPoint.lng); if(ds&&!openInfo(ds).open) notes.push(`<b>${nm(ds)}</b>: ${openLabel(ds)}`); }
   if(fmin>40) notes.push(t("longWalk",fmin>=60?`${Math.floor(fmin/60)} h ${fmin%60} ${t("min")}`:`${fmin} ${t("min")}`)+` <a href="https://www.google.com/maps/dir/?api=1&origin=${startPoint.lat},${startPoint.lng}&destination=${destPoint.lat},${destPoint.lng}&travelmode=transit" target="_blank" rel="noopener">${t("transitLink")}</a>`);
   $("tripNote").innerHTML=notes.join("<br>"); $("tripNote").hidden=!notes.length;
   const gl=$("gmapsLink"); $("handoff").hidden=false;
@@ -1605,7 +1606,7 @@ function renderPremium(){
   const deserts=cl.filter(c=>c.m>10);
   $("sShel").textContent=sh.length; $("sOut").textContent=fmtN(deserts.reduce((s,c)=>s+atRisk(c),0)); $("sDes").textContent=deserts.length;
   const ranked=[...cl].sort((a,b)=>score(b)-score(a));
-  $("rank").innerHTML=ranked.map(c=>`<li><button class="row plain" data-i="${scored.indexOf(c)}"><span><span class="name">${nm(c)}</span><br><span class="sub">${lang==="zh"?D[c.dist]:c.dist} · ${fmtN(atRisk(c))} ${t("atRisk")} · ${c.lst.toFixed(1)}°C</span></span><span class="num"><i class="band" style="background:${bandCol(c.m)}"></i>${mins(c.m)} ${t("min")}<br><span class="sub">${t("score")} ${score(c)}</span></span></button></li>`).join("");
+  $("rank").innerHTML=ranked.map(c=>`<li><button class="row plain" data-i="${scored.indexOf(c)}"><span><span class="name">${nm(c)}</span><br><span class="sub">${lang==="zh"?D[c.dist]:c.dist} · ${fmtN(atRisk(c))} ${t("atRisk")} · ${t("surf")} ${c.lst.toFixed(1)}°C</span></span><span class="num"><i class="band" style="background:${bandCol(c.m)}"></i>${mins(c.m)} ${t("min")}<br><span class="sub">${t("score")} ${score(c)}</span></span></button></li>`).join("");
   // Pro-only: deployment + export
   if(tier===2){
     const top=[...deserts].sort((a,b)=>score(b)-score(a)).slice(0,3);
