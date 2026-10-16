@@ -1205,7 +1205,7 @@ function applyExits(d){
 const pick=(o,...keys)=>keys.reduce((v,k)=>v&&v[k],o);
 // the address service answers in CAPITALS; show it as normal text
 const cleanName=s=>String(s||"").replace(/^\s*[（(]\s*(.+?)\s*[)）]\s*$/,"$1").replace(/\s*[（(]\s*(previous name|former name|前稱|舊稱)\s*[)）]/ig,"").trim();
-function titleCase(s){ const KEEP=/^(hk|hku|mtr|cuhk|hkust|polyu|hkbu|hkmu|hkcec|hkapa|vtc|ive|ymca|ywca|ifc|hsbc|gpo|ii|iii|iv)$/i, SMALL=/^(of|and|the|at|in|on|for|de|by)$/i;
+function titleCase(s){ const KEEP=/^(hk|hku|mtr|cuhk|hkust|polyu|hkbu|hkmu|hkcec|hkapa|vtc|ive|ymca|ywca|ifc|hsbc|gpo|ii|iii|iv)$/i, SMALL=/^(of|and|the|for|de|by)$/i;
   return cleanName((s||"").toLowerCase().replace(/[a-z][a-z']*/g,(w,i)=>KEEP.test(w)?w.toUpperCase():(i>0&&SMALL.test(w))?w:w[0].toUpperCase()+w.slice(1)).replace(/\bHKU Space\b/g,"HKU SPACE")); }
 function alsLabel(pa,zh){
   if(!pa) return "";
@@ -1237,7 +1237,7 @@ function relevance(q,label){
   const ws=(q||"").toLowerCase().split(/[^a-z0-9]+/).filter(w=>w.length>1); if(!ws.length) return 0;
   return ws.filter(w=>b.includes(w)).length/ws.length;
 }
-const GEO_NOISE=/自動心臟除顫器|Defibrillator|Wi-?Fi|熱點|Access Point|智郵站|iPostal|郵政信箱|別稱|Other Name|充電|Charging/i;
+const GEO_NOISE=/自動心臟除顫器|Defibrillator|Wi-?Fi|熱點|Access Point|智郵站|iPostal|郵政信箱|別稱|Other Name|充電|Charging|Recycling|回收|Collection Point|收集點/i;
 // HK Government location search (Lands Department GeoInfo Map): named buildings, facilities, streets and addresses, in both languages
 async function searchGeoInfo(q,n=5){
   const r=await fetch(`https://www.map.gov.hk/gs/api/v1.0.0/locationSearch?q=${encodeURIComponent(q)}`).then(r=>r.json());
@@ -1252,6 +1252,7 @@ async function searchGeoInfo(q,n=5){
       if(!/station|站/i.test(q)&&/\bstation\b|站$/.test(L)) p+=.3;            // asked for the place, not its MTR station
       if(!/car ?park|停車場/i.test(q)&&/car ?park|停車場/.test(L)) p+=.35;       // car parks are rarely the destination
       if(/\((to|往)[^)]*\)/i.test(x.en+x.zh)) p+=.35;                           // "Promenade (To HKCEC)" is a path to it, not the place
+      { const ql=q.toLowerCase().trim(), el=x.en.toLowerCase(), i=el.indexOf(ql); if(i>0&&/[-:–]\s*$/.test(el.slice(0,i))) p+=.3; }  // "Circle K-Metro City Plaza" is a shop inside it
       x.score=x.rel-p; return x; }).sort((a,b)=>b.score-a.score).slice(0,n);
 }
 let gPlaces=null;
@@ -1439,12 +1440,12 @@ function fuzzyPlace(s){ const k=s.toLowerCase().replace(/ station$/,"").replace(
   let best=null; const test=(name,obj)=>{ const n=name.toLowerCase().replace(/[^a-z0-9+]/g,""); const d=lev(k,n); if(d<=(k.length>=9?2:1)&&(!best||d<best.d)) best={d,obj}; };
   MTR.forEach(o=>test(o.en,o)); SHELTERS.forEach(o=>test(o.en,o)); ALIAS.forEach(a=>test(a[3],{lat:a[1],lng:a[2],en:a[3],zh:a[4]}));
   return best&&best.obj; }
-async function resolvePlace(q){
+async function resolvePlace(q,skipLocal){
   const s=q.trim(); if(!s) return null;
   const al=aliasFor(s); if(al) return al;
   const m=s.match(/^(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)$/); if(m) return {lat:+m[1],lng:+m[2],en:s,zh:s};
   // 1) exact name of an MTR station or cool shelter
-  const low=norm(s), local=MTR.find(o=>norm(o.en)===low||o.zh===low)||SHELTERS.find(o=>o.en.toLowerCase()===s.toLowerCase()||o.zh===s);
+  const low=norm(s), local=skipLocal?null:MTR.find(o=>norm(o.en)===low||o.zh===low)||SHELTERS.find(o=>o.en.toLowerCase()===s.toLowerCase()||o.zh===s);
   if(local) return local;
   // 2) HK Government location search (best for named places and addresses)
   try{ const g=await searchGeoInfo(s,3); if(g.length) return g[0]; }catch(e){}
@@ -1525,6 +1526,8 @@ async function findRoute0(){
     else if(away[0]!==openOne) toast(t("skipClosed",nm(away[0].s),nm(destPoint))); }
   if(id!==reqId) return;
   if(!inHK(startPoint.lat,startPoint.lng)||!inHK(destPoint.lat,destPoint.lng)){ st.textContent=t("outsideHK"); toast(t("outsideHK")); clearRoute(); return; }
+  if(dist([startPoint.lat,startPoint.lng],[destPoint.lat,destPoint.lng])<30&&$("destIn").value.trim()&&!/station|站/i.test($("destIn").value)){
+    const p=await resolvePlace($("destIn").value,true); if(id!==reqId) return; if(p&&dist([startPoint.lat,startPoint.lng],[p.lat,p.lng])>=30) destPoint=p; }
   if(dist([startPoint.lat,startPoint.lng],[destPoint.lat,destPoint.lng])<30){ st.textContent=t("samePlace"); toast(t("samePlace")); clearRoute(); return; }
   { const sd=dist([startPoint.lat,startPoint.lng],[destPoint.lat,destPoint.lng]); if(sd>8000){ clearRoute(); st.textContent=t("tooFar",(sd/1000).toFixed(0),nm(destPoint));
       $("tripNote").innerHTML=`<a href="https://www.google.com/maps/dir/?api=1&origin=${startPoint.lat},${startPoint.lng}&destination=${destPoint.lat},${destPoint.lng}&travelmode=transit" target="_blank" rel="noopener">${t("transitLink")}</a>`; $("tripNote").hidden=false; return; } }
