@@ -1420,16 +1420,16 @@ function drawSelExits(){
 let startPoint=null, destPoint=null, routes={}, chosen="shade", reqId=0, picking=false;
 
 const ALIAS=[
- [["polyu","理大","香港理工大學","hong kong polytechnic university","polytechnic university"],22.3043,114.1797,"The Hong Kong Polytechnic University","香港理工大學"],
+ [["polyu","理大","香港理工大學","hong kong polytechnic university","polytechnic university"],22.3045,114.1796,"The Hong Kong Polytechnic University","香港理工大學"],
  [["hku","港大","香港大學","university of hong kong"],22.2830,114.1371,"The University of Hong Kong","香港大學"],
- [["cuhk","中大","香港中文大學","中文大學","chinese university"],22.4196,114.2068,"The Chinese University of Hong Kong","香港中文大學"],
- [["hkust","科大","香港科技大學","ust"],22.3364,114.2655,"HKUST","香港科技大學"],
- [["cityu","城大","香港城市大學","city university"],22.3366,114.1728,"City University of Hong Kong","香港城市大學"],
- [["hkbu","浸大","香港浸會大學","baptist university"],22.3397,114.1820,"Hong Kong Baptist University","香港浸會大學"],
- [["m+","m plus","m+ museum","m+博物館"],22.3016,114.1597,"M+","M+ 博物館"],
- [["ocean park","海洋公園"],22.2467,114.1758,"Ocean Park","海洋公園"],
- [["che kung temple","車公廟","sha tin che kung temple"],22.3729,114.1782,"Che Kung Temple","車公廟"],
- [["ifc","ifc mall","國金","國際金融中心"],22.2850,114.1588,"IFC Mall","國際金融中心商場"],
+ [["cuhk","中大","香港中文大學","中文大學","chinese university"],22.4220,114.2024,"The Chinese University of Hong Kong","香港中文大學"],
+ [["hkust","科大","香港科技大學","ust"],22.3361,114.2651,"HKUST","香港科技大學"],
+ [["cityu","城大","香港城市大學","city university"],22.3362,114.1745,"City University of Hong Kong","香港城市大學"],
+ [["hkbu","浸大","香港浸會大學","baptist university"],22.3409,114.1795,"Hong Kong Baptist University","香港浸會大學"],
+ [["m+","m plus","m+ museum","m+博物館"],22.3008,114.1588,"M+","M+ 博物館"],
+ [["ocean park","海洋公園"],22.2482,114.1747,"Ocean Park","海洋公園"],
+ [["che kung temple","車公廟","sha tin che kung temple"],22.3734,114.1828,"Che Kung Temple","車公廟"],
+ [["ifc","ifc mall","國金","國際金融中心"],22.2848,114.1583,"IFC Mall","國際金融中心商場"],
  [["hkcec","會展","會議展覽中心","香港會議展覽中心","convention centre","convention and exhibition centre","hong kong convention and exhibition centre"],22.2833,114.1733,"Hong Kong Convention and Exhibition Centre","香港會議展覽中心"]];
 const aliasKey=s=>s.toLowerCase().replace(/\s+/g," ").trim();
 function aliasFor(s){ if(/station|站/i.test(s)) return null; const k=aliasKey(s); const a=ALIAS.find(x=>x[0].includes(k)); return a?{lat:a[1],lng:a[2],en:a[3],zh:a[4]}:null; }
