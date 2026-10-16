@@ -66,6 +66,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible,[t
 .wx .t{font:600 22px/1 var(--f-mono)}
 .wx .rh{font:600 14px var(--f-mono);color:var(--muted)}
 .wx .src{font-size:10.5px;color:var(--muted)}
+.wx .obs{font-weight:400;color:var(--muted);font-variant-numeric:tabular-nums}
 .wx .warn{font-size:11.5px;font-weight:700;color:var(--heat)}
 /* basemap picker */
 .bmaps-old{position:absolute;top:10px;right:10px;z-index:3;display:flex;flex-direction:column;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:4px;box-shadow:0 2px 8px rgba(0,0,0,.12)}
@@ -512,7 +513,7 @@ const T = {
   shadeTrees:"Tree shade",shadeIndoor:"Indoor, air-conditioned",shadeCovered:"Covered from sun and rain",noShadeList:"No shaded segments on this route.",
   heatAdvice:(l,t)=>`<b>${l}</b> · ${t}°C. Walk in the shade, carry water, and rest in a cool shelter if you feel dizzy.`,
   vhot:"Very Hot Weather Warning",hot:"Hot Weather Warning",
-  wxNear:"HKO station",wxLive:"Live · nearest HKO station",wxSample:"Sample data (HKO unreachable)",wxRhHQ:"RH from HKO HQ",
+  wxNear:"HKO station",wxLive:"Live · nearest HKO station",wxSample:"Sample data (HKO unreachable)",wxNone:"Weather unavailable",wxRetry:"Couldn't reach the Observatory · retrying",wxRhHQ:"RH from HKO HQ",
   freeAccess:"Air-conditioned, free to enter",walk:"Walk",desert:"Cool Island Desert",nearest:"Nearest shelter",surf:"Surface temp",
   subscribed:p=>`Subscribed to ${p} (demo)`,catchNote:"Shaded rings: 5 / 10-min walk",
   deployTag:i=>i===0?"Mobile cooling unit":"Hydration station",
@@ -549,7 +550,7 @@ const T = {
   shadeTrees:"樹蔭",shadeIndoor:"室內，有冷氣",shadeCovered:"可遮太陽擋雨",noShadeList:"此路線沒有遮蔭路段。",
   heatAdvice:(l,t)=>`<b>${l}</b> · ${t}°C。請行陰涼路線、帶水，如感到暈眩請到避暑點休息。`,
   vhot:"酷熱天氣警告",hot:"炎熱天氣警告",
-  wxNear:"天文台站",wxLive:"即時 · 最近天文台站",wxSample:"示範數據（未能連接天文台）",wxRhHQ:"濕度取自天文台總部",
+  wxNear:"天文台站",wxLive:"即時 · 最近天文台站",wxSample:"示範數據（未能連接天文台）",wxNone:"未能取得天氣",wxRetry:"未能連接天文台 · 稍後重試",wxRhHQ:"濕度取自天文台總部",
   freeAccess:"有冷氣，免費進入",walk:"步行",desert:"避暑沙漠",nearest:"最近避暑點",surf:"地表溫度",
   subscribed:p=>`已訂閱${p}（示範）`,catchNote:"陰影圈：5／10 分鐘步行範圍",
   deployTag:i=>i===0?"流動降溫站":"補水站",
@@ -1006,29 +1007,39 @@ async function loadWeather(){
     const [now,warn]=await Promise.all([
       fetch("https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=rhrread&lang=en").then(r=>r.json()),
       fetch("https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=warnsum&lang=en").then(r=>r.json())]);
-    const temps={}; now.temperature.data.forEach(d=>temps[d.place]=d.value);
+    // hourly report: whole-degree temperatures, used only if the 10-minute station readings can't be loaded
+    let temps={}; now.temperature.data.forEach(d=>temps[d.place]=d.value);
+    let obs=String(now.temperature.recordTime||now.updateTime||"").slice(11,16);
     const rhHQ = now.humidity.data[0].value; let rh={};
-    try{ // regional relative humidity (1-minute readings per station)
-      // the Observatory's CSV can't be read directly by browsers (no CORS), so use the copy archived every 10 min on DATA.GOV.HK
-      const hkt=new Date(Date.now()+8*3600e3-15*60e3).toISOString(), tm=hkt.slice(0,10).replace(/-/g,"")+"-"+hkt.slice(11,13)+hkt.slice(14,15)+"0";
-      const csv=await fetch("https://api.data.gov.hk/v1/historical-archive/get-file?url="+encodeURIComponent("https://data.weather.gov.hk/weatherAPI/hko_data/regional-weather/latest_1min_humidity.csv")+"&time="+tm).then(r=>{if(!r.ok)throw 0;return r.text()});
-      csv.trim().split(/\r?\n/).slice(1).forEach(l=>{const c=l.split(",");const v=parseFloat(c[2]);if(c[1]&&!isNaN(v))rh[c[1].trim().replace(/^HK /,"Hong Kong ")]=v});
-    }catch(e){}
+    // regional 1-minute readings per station (temperature to 0.1 °C, relative humidity), refreshed every 10 minutes.
+    // The Observatory's CSV can't be read directly by browsers (no CORS), so use the copy archived on DATA.GOV.HK
+    const csv1=async name=>{ for(const back of [0,10,20]){ try{
+      const hkt=new Date(Date.now()+8*3600e3-back*60e3).toISOString(), tm=hkt.slice(0,10).replace(/-/g,"")+"-"+hkt.slice(11,13)+hkt.slice(14,15)+"0";
+      const txt=await fetch("https://api.data.gov.hk/v1/historical-archive/get-file?url="+encodeURIComponent("https://data.weather.gov.hk/weatherAPI/hko_data/regional-weather/latest_1min_"+name+".csv")+"&time="+tm).then(r=>{if(!r.ok)throw 0;return r.text()});
+      const out={}; let when="";
+      txt.trim().split(/\r?\n/).slice(1).forEach(l=>{const c=l.split(",");const v=parseFloat(c[2]);if(c[1]&&!isNaN(v)){out[c[1].trim().replace(/^HK /,"Hong Kong ")]=v;when=c[0].trim()}});
+      if(Object.keys(out).length) return {out,when:when.length>=12?when.slice(8,10)+":"+when.slice(10,12):""};
+    }catch(e){} } return null; };
+    const [t1,r1]=await Promise.all([csv1("temperature"),csv1("humidity")]);
+    if(t1){ temps={...temps,...t1.out}; if(t1.when) obs=t1.when; }
+    if(r1) rh=r1.out;
     const code=warn.WHOT&&warn.WHOT.code;
-    WX={temps,rh,rhHQ,warn:code==="VHOT"?"vhot":code==="HOT"?"hot":"",live:true};
+    WX={temps,rh,rhHQ,obs,warn:code==="VHOT"?"vhot":code==="HOT"?"hot":"",live:true};
   }catch(e){
-    const temps={},rh={}; STATIONS.forEach((s,i)=>{temps[s.en]=+(32+((i*37)%30)/10).toFixed(1);rh[s.en]=70+((i*13)%16)});
-    WX={temps,rh,rhHQ:76,warn:"vhot",live:false};
+    if(WX&&WX.live) return; // keep the last good reading
+    WX={temps:{},rh:{},rhHQ:null,warn:"",live:false};
+    clearTimeout(loadWeather.retry); loadWeather.retry=setTimeout(()=>loadWeather().then(()=>renderWeather()),60000);
   }
 }
 let wxPoint=[SAMPLE_START.lat,SAMPLE_START.lng];
 function renderWeather(p){
   if(p) wxPoint=p; if(!WX) return;
+  if(!WX.live){ $("wx").innerHTML=`<span class="where">${t("wxNone")}</span><span class="vals"><span class="t">–°C</span><span class="rh">${t("rhLbl")} –%</span></span><span class="src">${t("wxRetry")}</span>`; return; }
   // nearest station that reported a temperature
   const st=STATIONS.filter(s=>WX.temps[s.en]!=null).map(s=>({s,d:dist(wxPoint,[s.lat,s.lng])})).sort((a,b)=>a.d-b.d)[0].s;
   const temp=WX.temps[st.en]; const rhSt=STATIONS.filter(s=>WX.rh[s.en]!=null).map(s=>({s,d:dist(wxPoint,[s.lat,s.lng])})).sort((a,b)=>a.d-b.d)[0];
   const useLocalRh = rhSt && rhSt.d<6000; const rh = useLocalRh?WX.rh[rhSt.s.en]:WX.rhHQ;
-  $("wx").innerHTML=`<span class="where">${nm(st)}</span>
+  $("wx").innerHTML=`<span class="where">${nm(st)}${WX.obs?` <span class="obs">· ${WX.obs}</span>`:""}</span>
     <span class="vals"><span class="t">${temp}°C</span><span class="rh">${t("rhLbl")} ${rh}%</span></span>
     ${WX.warn?`<span class="warn">⚠ ${t(WX.warn)}</span>`:""}
     <span class="src">${WX.live?t("wxLive"):t("wxSample")}${useLocalRh?"":" · "+t("wxRhHQ")}</span>`;
@@ -1051,7 +1062,7 @@ require(["esri/config","esri/Map","esri/WebMap","esri/views/MapView","esri/Basem
   const map = CONFIG.WEBMAP_ID ? new WebMap({portalItem:{id:CONFIG.WEBMAP_ID}}) : new EsriMap({basemap:makeBasemap("hk")});
   ["lst","catch","demand","areas","shade","oshade","shelters","mtr","mtrst","route","exits","deploy"].forEach(k=>{layers[k]=new GraphicsLayer({id:k});});
   map.addMany([layers.lst,layers.catch,layers.demand,layers.shade,layers.oshade,layers.areas,layers.shelters,layers.mtr,layers.mtrst,layers.route,layers.exits,layers.deploy]);
-  layers.mtrst.minScale=150000; // station dots only once zoomed in to district level
+  // station dots at every zoom level; drawn a little smaller when zoomed out
 
   view = new MapView({container:"map",map,center:[114.18,22.30],zoom:13,
     constraints:{maxZoom:19,snapToZoom:false,rotationEnabled:false,lods:Array.from({length:24},(_,z)=>({level:z,resolution:156543.03392800014/2**z,scale:591657527.591555/2**z})),geometry:new Extent({...HK_MERC,spatialReference:{wkid:3857}})},
@@ -1072,6 +1083,7 @@ require(["esri/config","esri/Map","esri/WebMap","esri/views/MapView","esri/Basem
   // MTR lines are drawn station-to-station, so fade them at street level where they would cover the walking route
   reactiveUtils.watch(()=>view.zoom,()=>{ mtrFade(); lowZoomCheck(); });
   reactiveUtils.watch(()=>view.zoom>=17,()=>drawSelExits());
+  reactiveUtils.watch(()=>view.zoom<12,()=>drawMTR());
   reactiveUtils.watch(()=>view.stationary,s=>{ if(s) drawOSM(); });
 
   view.on("click",e=>{
@@ -1381,9 +1393,9 @@ function drawMTR(){
     layers.mtr.add(new Graphic({geometry:pline(coords),symbol:{type:"simple-line",color:LINES[code][2],width:4,cap:"round",join:"round"},
       popupTemplate:{title:lang==="zh"?LINES[code][1]:LINES[code][0],content:""}}));
   }));
-  layers.mtrst.removeAll();
+  layers.mtrst.removeAll(); const small=view&&view.zoom<12;
   MTR.forEach(s=>layers.mtrst.add(new Graphic({geometry:pt(s.lat,s.lng),
-    symbol:{type:"simple-marker",color:"#ffffff",size:s.lines.length>1?9:7,outline:{color:s.lines.length>1?"#132a33":LINES[s.lines[0]][2],width:s.lines.length>1?2:1.6}},
+    symbol:{type:"simple-marker",color:"#ffffff",size:s.lines.length>1?(small?7:9):(small?5:7),outline:{color:s.lines.length>1?"#132a33":LINES[s.lines[0]][2],width:s.lines.length>1?(small?1.6:2):(small?1.3:1.6)}},
     popupTemplate:{title:stLabel(s),content:`${t("linesLbl")}: ${lineNames(s)}${s.exits&&s.exits.length?`<br>${t("exitsLbl")}: ${s.exits.map(x=>x.ref).join(", ")}`:""}`}})));
   drawSelExits();
 }
