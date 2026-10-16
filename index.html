@@ -1205,7 +1205,7 @@ function applyExits(d){
 const pick=(o,...keys)=>keys.reduce((v,k)=>v&&v[k],o);
 // the address service answers in CAPITALS; show it as normal text
 const cleanName=s=>String(s||"").replace(/^\s*[（(]\s*(.+?)\s*[)）]\s*$/,"$1").replace(/\s*[（(]\s*(previous name|former name|前稱|舊稱)\s*[)）]/ig,"").trim();
-function titleCase(s){ const KEEP=/^(hk|hku|mtr|cuhk|hkust|polyu|hkbu|hkmu|vtc|ive|ymca|ywca|ifc|hsbc|gpo|ii|iii|iv)$/i, SMALL=/^(of|and|the|at|in|on|for|de|by)$/i;
+function titleCase(s){ const KEEP=/^(hk|hku|mtr|cuhk|hkust|polyu|hkbu|hkmu|hkcec|hkapa|vtc|ive|ymca|ywca|ifc|hsbc|gpo|ii|iii|iv)$/i, SMALL=/^(of|and|the|at|in|on|for|de|by)$/i;
   return cleanName((s||"").toLowerCase().replace(/[a-z][a-z']*/g,(w,i)=>KEEP.test(w)?w.toUpperCase():(i>0&&SMALL.test(w))?w:w[0].toUpperCase()+w.slice(1)).replace(/\bHKU Space\b/g,"HKU SPACE")); }
 function alsLabel(pa,zh){
   if(!pa) return "";
@@ -1248,7 +1248,11 @@ async function searchGeoInfo(q,n=5){
     return{kind:"place",lat:la,lng:ln,en,zh,label:lang==="zh"?zh:en,sub:(addr?addr.replace(/\s{2,}/g," ")+" · ":"")+t("srcGeo"),icon:`<span class="ic">📍</span>`,
       // match on the place name; the address only counts when it contains the whole query (e.g. "培正道5號")
       rel:Math.max(relevance(q,zh),relevance(q,en),[x.addressZH,x.addressEN].some(a=>a&&relevance(q,a)===1)?.9:0)};
-  }).filter(x=>x.rel>=0.6).sort((a,b)=>b.rel-a.rel).slice(0,n);
+  }).filter(x=>x.rel>=0.6).map(x=>{ const L=(x.en+" "+x.zh).toLowerCase(); let p=0;
+      if(!/station|站/i.test(q)&&/\bstation\b|站$/.test(L)) p+=.3;            // asked for the place, not its MTR station
+      if(!/car ?park|停車場/i.test(q)&&/car ?park|停車場/.test(L)) p+=.35;       // car parks are rarely the destination
+      if(/\((to|往)[^)]*\)/i.test(x.en+x.zh)) p+=.35;                           // "Promenade (To HKCEC)" is a path to it, not the place
+      x.score=x.rel-p; return x; }).sort((a,b)=>b.score-a.score).slice(0,n);
 }
 let gPlaces=null;
 async function googleReady(){
@@ -1424,7 +1428,8 @@ const ALIAS=[
  [["hkbu","浸大","香港浸會大學","baptist university"],22.3397,114.1820,"Hong Kong Baptist University","香港浸會大學"],
  [["m+","m plus","m+ museum","m+博物館"],22.3016,114.1597,"M+","M+ 博物館"],
  [["ocean park","海洋公園"],22.2467,114.1758,"Ocean Park","海洋公園"],
- [["ifc","ifc mall","國金","國際金融中心"],22.2850,114.1588,"IFC Mall","國際金融中心商場"]];
+ [["ifc","ifc mall","國金","國際金融中心"],22.2850,114.1588,"IFC Mall","國際金融中心商場"],
+ [["hkcec","會展","會議展覽中心","香港會議展覽中心","convention centre","convention and exhibition centre","hong kong convention and exhibition centre"],22.2833,114.1733,"Hong Kong Convention and Exhibition Centre","香港會議展覽中心"]];
 const aliasKey=s=>s.toLowerCase().replace(/\s+/g," ").trim();
 function aliasFor(s){ if(/station|站/i.test(s)) return null; const k=aliasKey(s); const a=ALIAS.find(x=>x[0].includes(k)); return a?{lat:a[1],lng:a[2],en:a[3],zh:a[4]}:null; }
 function lev(a,b){ const m=a.length,n=b.length; if(Math.abs(m-n)>2) return 9; let p=Array.from({length:n+1},(_,j)=>j);
