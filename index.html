@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
 <title>Cool HK 清涼香港</title>
 <meta name="description" content="Cool HK finds shaded walking routes in Hong Kong: covered walkways, footbridges, malls and cool shelters, with live Observatory weather.">
 <meta name="theme-color" content="#0f7c8c">
@@ -36,7 +37,7 @@ html,body{height:100%;margin:0}
 body{background:var(--bg);color:var(--ink);font:15px/1.45 var(--f-body);overflow:hidden}
 #app{height:100%;display:flex;flex-direction:column;background:var(--bg);position:relative}
 button{font-family:inherit}
-button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--cool);outline-offset:2px}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--cool);outline-offset:2px}
 
 /* header */
 .top{display:flex;align-items:center;gap:10px;padding:10px 14px;padding-top:calc(10px + env(safe-area-inset-top,0px));background:var(--panel);border-bottom:1px solid var(--line);z-index:5}
@@ -242,12 +243,12 @@ body.framed-bg{background:#cfd8db}
       <button class="p" data-v="premium" aria-pressed="false" data-i18n="tabPremium">Premium</button>
     </div>
     <span class="spacer"></span>
-    <button class="iconbtn" id="settingsBtn" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg> <span data-i18n="settings">Settings</span></button>
+    <button class="iconbtn" id="settingsBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg> <span data-i18n="settings">Settings</span></button>
   </header>
 
   <div class="body">
     <aside class="sheet" id="sheet" data-state="peek">
-      <button class="handle" id="handle" aria-label="Resize panel"><i></i></button>
+      <button class="handle" id="handle" data-i18n-title="resizePanel" aria-label="Resize panel"><i></i></button>
       <div class="sheet-inner">
 
         <!-- ============ PUBLIC ============ -->
@@ -267,7 +268,7 @@ body.framed-bg{background:#cfd8db}
             <button type="button" class="pickrow" id="pickBtn" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span data-i18n="pick">Pick start point on map</span></button>
             <button class="btn" type="submit" style="grid-column:1/-1" data-i18n="go">Find shaded route</button>
           </form>
-          <div class="status" id="status"></div>
+          <div class="status" id="status" role="status" aria-live="polite"></div>
           <div class="routes" id="routes" hidden>
             <button class="rcard" id="rcShade" aria-pressed="true">
               <span class="k" style="color:var(--rshade)" data-i18n="mostShaded">Most shaded</span>
@@ -408,7 +409,7 @@ body.framed-bg{background:#cfd8db}
       <div id="map"></div>
       <div class="wx" id="wx"><span class="where">…</span></div>
 
-      <div class="toast" id="toast"></div>
+      <div class="toast" id="toast" role="status" aria-live="polite"></div>
       <div class="pickbar" id="pickBar" hidden><span data-i18n="pickNow">Tap the map to set your start point.</span><button type="button" id="pickCancel" data-i18n="cancel">Cancel</button></div>
       <div class="maploading" id="mapLoading"><i></i><span data-i18n="loadingMap">Loading map…</span></div>
     </div>
@@ -416,7 +417,7 @@ body.framed-bg{background:#cfd8db}
 
   <div class="settings-bg" id="settingsBg" hidden>
     <div class="settings" role="dialog" aria-modal="true" aria-labelledby="setTitle">
-      <h2 id="setTitle"><span data-i18n="settings">Settings</span><button class="close" id="settingsClose" aria-label="Close">✕</button></h2>
+      <h2 id="setTitle"><span data-i18n="settings">Settings</span><button class="close" id="settingsClose" data-i18n-title="close" aria-label="Close">✕</button></h2>
       <div class="opt"><span class="lbl" data-i18n="setLang">Language</span>
         <div class="optrow" id="optLang"><button data-o="en">English</button><button data-o="zh">繁體中文</button></div></div>
       <div class="opt"><span class="lbl" data-i18n="setView">View</span>
@@ -479,7 +480,7 @@ const CONFIG = {
 // LANGUAGE
 // =====================================================================
 const T = {
- en:{nearSoon:(a,o,b)=>`${a} opens at ${o} and is much closer than ${b}, so the route goes there.`,destAuto:n=>`To ${n} (nearest cool shelter). `,mostCovered:"Most covered",bestRouteNight:"Best route (most covered and fastest)",coverOnRoute:"Cover on this route",lgRCover:"Route under cover",lgRUncov:"Route not covered",sameRouteNight:"The fastest route already uses the cover nearby, so it is also the most covered.",noShadeNight:"No covered walkway lies along this trip, so the fastest route is also the most covered.",covered:"covered",uncovered:"min uncovered",shadeBetterNight:(x,s)=>`The covered route takes ${x} min longer but keeps you under cover for ${s} more min.`,nightNote:"The sun has set, so the route is ranked by cover (useful in rain) rather than shade.",open24:"Open 24 hours (heat shelter)",openUntil:t=>`Open until ${t}`,closedOpens:t=>`Closed now · opens ${t}`,hoursApprox:"approximate hours",allClosed:(n,o)=>`Nearby cool shelters are closed now. Showing ${n}${o?`, which opens at ${o}`:""}.`,skipClosed:(a,b)=>`${a} is closed now, so the route goes to ${b}.`,ferryNote:"This route includes a ferry crossing (the time shown includes it).",longWalk:m=>`This is a long walk (about ${m}). In hot weather, take the MTR or a bus for most of it.`,transitLink:"Public transport options",outsideHK:"Cool HK covers Hong Kong only. Choose a start and destination in Hong Kong.",geoOutside:"Your location seems to be outside Hong Kong, so a sample start in Hong Kong is used.",lgNote:"Route colours show what shades each part:",finding:"Finding route…",cancel:"Cancel",pinned:"Pinned point on map",loadingMap:"Loading map…",clear:"Clear",rhLbl:"RH",nearStart:"Cool shelters near your start",kC:"Covered walkway",kB:"Footbridge (usually covered)",kU:"Subway / underpass",kI:"Indoor corridor",kT:"Tree-lined street",kM:"Shopping mall (indoor, air-con)",kUnnamed:"Unnamed section",lgIndoor:"Subway / indoor / mall",loadingShade:"Loading covered walkways and malls…",routingShade:"Comparing routes through footbridges, subways and malls…",shadeSample:" Real shade data could not load, so sample walkways were used.",swap:"Swap start and destination",lgRShade:"Route in shade",lgRSun:"Route in the sun",lgFerry:"Ferry crossing",segFerry:"Ferry",segShade:"In the shade",segSun:"In the sun",bestRoute:"Best route (shadiest and fastest)",shelOnWay:"Air-conditioned shelter on the way",setAbout:"About & credits",crData:"Data, maps & services",crCourse:"Course & project materials",aboutTxt:"Cool HK is a student group project for GEOG2147 Build Smart Cities with GIS (HKU). Routes are suggestions only: follow road signs and the Observatory's heat advice.",sampleStartLbl:"Victoria Park (sample start)",tabPublic:"Public · Free",tabPremium:"Premium",pubTitle:"Walk in the shade",pubHint:"Type where you're going. Leave the start empty to use your current location.",
+ en:{close:"Close",resizePanel:"Resize panel",nearSoon:(a,o,b)=>`${a} opens at ${o} and is much closer than ${b}, so the route goes there.`,destAuto:n=>`To ${n} (nearest cool shelter). `,mostCovered:"Most covered",bestRouteNight:"Best route (most covered and fastest)",coverOnRoute:"Cover on this route",lgRCover:"Route under cover",lgRUncov:"Route not covered",sameRouteNight:"The fastest route already uses the cover nearby, so it is also the most covered.",noShadeNight:"No covered walkway lies along this trip, so the fastest route is also the most covered.",covered:"covered",uncovered:"min uncovered",shadeBetterNight:(x,s)=>`The covered route takes ${x} min longer but keeps you under cover for ${s} more min.`,nightNote:"The sun has set, so the route is ranked by cover (useful in rain) rather than shade.",open24:"Open 24 hours (heat shelter)",openUntil:t=>`Open until ${t}`,closedOpens:t=>`Closed now · opens ${t}`,hoursApprox:"approximate hours",allClosed:(n,o)=>`Nearby cool shelters are closed now. Showing ${n}${o?`, which opens at ${o}`:""}.`,skipClosed:(a,b)=>`${a} is closed now, so the route goes to ${b}.`,ferryNote:"This route includes a ferry crossing (the time shown includes it).",longWalk:m=>`This is a long walk (about ${m}). In hot weather, take the MTR or a bus for most of it.`,transitLink:"Public transport options",outsideHK:"Cool HK covers Hong Kong only. Choose a start and destination in Hong Kong.",geoOutside:"Your location seems to be outside Hong Kong, so a sample start in Hong Kong is used.",lgNote:"Route colours show what shades each part:",finding:"Finding route…",cancel:"Cancel",pinned:"Pinned point on map",loadingMap:"Loading map…",clear:"Clear",rhLbl:"RH",nearStart:"Cool shelters near your start",kC:"Covered walkway",kB:"Footbridge (usually covered)",kU:"Subway / underpass",kI:"Indoor corridor",kT:"Tree-lined street",kM:"Shopping mall (indoor, air-con)",kUnnamed:"Unnamed section",lgIndoor:"Subway / indoor / mall",loadingShade:"Loading covered walkways and malls…",routingShade:"Comparing routes through footbridges, subways and malls…",shadeSample:" Real shade data could not load, so sample walkways were used.",swap:"Swap start and destination",lgRShade:"Route in shade",lgRSun:"Route in the sun",lgFerry:"Ferry crossing",segFerry:"Ferry",segShade:"In the shade",segSun:"In the sun",bestRoute:"Best route (shadiest and fastest)",shelOnWay:"Air-conditioned shelter on the way",setAbout:"About & credits",crData:"Data, maps & services",crCourse:"Course & project materials",aboutTxt:"Cool HK is a student group project for GEOG2147 Build Smart Cities with GIS (HKU). Routes are suggestions only: follow road signs and the Observatory's heat advice.",sampleStartLbl:"Victoria Park (sample start)",tabPublic:"Public · Free",tabPremium:"Premium",pubTitle:"Walk in the shade",pubHint:"Type where you're going. Leave the start empty to use your current location.",
   startPh:"My current location",destPh:"Nearest cool shelter",pick:"Pick start point on map",go:"Find shaded route",mostShaded:"Most shaded",fastest:"Fastest",
   shadeOnRoute:"Shade on this route",otherShelters:"Other cool shelters nearby",lgCovered:"Covered walkway / footbridge",lgTrees:"Tree-lined street",lgShelter:"Cool shelter (air-con)",
   premFor:"For government departments & NGOs",plansTitle:"Choose a Premium plan",plansHint:"The public app stays free. Premium plans pay for heat-vulnerability analytics and services. Prices are proposals for the demo.",
@@ -516,7 +517,7 @@ const T = {
   hdrMtr:"MTR stations",hdrExits:"Station exits",hdrPlaces:"Places",hdrSearch:"Addresses & places",exit:"Exit",stCentre:"Station centre",chooseExit:"Exit:",
   exitsLoading:"Loading exits…",exitsNone:"Exit locations need an internet connection.",stSuf:" Station",exitLabel:(st,r)=>`${st} Station · Exit ${r}`,
   linesLbl:"Lines",exitsLbl:"Exits",typeShelter:"Cool shelter",typeArea:"Neighbourhood",noSugg:"No matches yet. Keep typing or press Find.",hdrAddr:"Addresses",hdrGoogle:"Google Maps places",srcALS:"Address",srcGeo:"HK GeoInfo Map",openGmaps:"Walk it in Google Maps",openAmaps:"Walk it in Apple Maps",atShelter:(a,b)=>`You are already at ${a}, so the route goes to the next nearest cool shelter, ${b}.`,samePlace:"Start and destination are the same place. Choose a different destination.",settings:"Settings",setLang:"Language",setView:"View",setMap:"Map type",setLayers:"Show on map",vAuto:"Auto",vPhone:"Phone",vDesk:"Computer",pMtr:"MTR lines & stations",pShade:"Covered walkways & shade",pShel:"Cool shelters"},
- zh:{nearSoon:(a,o,b)=>`${a}於 ${o} 開放，比${b}近得多，所以路線前往${a}。`,destAuto:n=>`前往${n}（最近的避暑點）。`,mostCovered:"最多遮蓋",bestRouteNight:"最佳路線（最多遮蓋亦最快）",coverOnRoute:"路線上的遮蓋",lgRCover:"路線：有遮蓋",lgRUncov:"路線：無遮蓋",sameRouteNight:"最快路線已經用到附近的有蓋通道，所以亦是最多遮蓋的路線。",noShadeNight:"此行程沿途沒有有蓋通道，所以最快路線亦是最多遮蓋的路線。",covered:"有蓋",uncovered:"分鐘無遮蓋",shadeBetterNight:(x,s)=>`有蓋路線多行 ${x} 分鐘，但多 ${s} 分鐘在有蓋地方步行。`,nightNote:"太陽已經下山，路線改為按有蓋程度排序（下雨時有用），而不是遮蔭。",open24:"24 小時開放（避暑中心）",openUntil:t=>`營業至 ${t}`,closedOpens:t=>`休息中 · ${t} 開放`,hoursApprox:"開放時間只供參考",allClosed:(n,o)=>`附近的避暑點現已關閉，顯示${n}${o?`（${o} 開放）`:""}。`,skipClosed:(a,b)=>`${a}現已關閉，路線改為前往${b}。`,ferryNote:"此路線包括渡輪航程，步行時間已計算在內。",longWalk:m=>`這段路程頗長（約 ${m}）。天氣炎熱時，建議大部分路程乘搭港鐵或巴士。`,transitLink:"查看公共交通",outsideHK:"清涼香港只涵蓋香港，請選擇香港境內的起點及目的地。",geoOutside:"你的位置似乎不在香港，因此改用香港的示範起點。",lgNote:"路線顏色代表每段的遮蔭類型：",finding:"搜尋路線中…",cancel:"取消",pinned:"地圖上選取的位置",loadingMap:"地圖載入中…",clear:"清除",rhLbl:"濕度",nearStart:"起點附近的避暑點",kC:"有蓋行人路",kB:"行人天橋（多數有蓋）",kU:"行人隧道／地下通道",kI:"室內通道",kT:"林蔭街道",kM:"商場（室內有冷氣）",kUnnamed:"未命名路段",lgIndoor:"隧道／室內／商場",loadingShade:"正在載入有蓋通道及商場資料…",routingShade:"正在比較經天橋、隧道及商場的路線…",shadeSample:" 未能載入真實遮蔭數據，暫用示範通道。",swap:"對調起點及目的地",lgRShade:"路線：有遮蔭",lgRSun:"路線：曬太陽",lgFerry:"渡輪航程",segFerry:"渡輪",segShade:"有遮蔭",segSun:"曬太陽",bestRoute:"最佳路線（最陰涼亦最快）",shelOnWay:"沿途有冷氣避暑點",setAbout:"關於及資料來源",crData:"數據、地圖及服務",crCourse:"課程及專題資料",aboutTxt:"清涼香港是香港大學 GEOG2147「以 GIS 建設智慧城市」的學生小組專題。路線只供參考，請留意路牌及天文台的酷熱天氣提示。",sampleStartLbl:"維多利亞公園（示範起點）",tabPublic:"公眾版 · 免費",tabPremium:"進階版",pubTitle:"行陰涼路線",pubHint:"輸入目的地。起點留空即使用你目前的位置。",
+ zh:{close:"關閉",resizePanel:"調整面板大小",nearSoon:(a,o,b)=>`${a}於 ${o} 開放，比${b}近得多，所以路線前往${a}。`,destAuto:n=>`前往${n}（最近的避暑點）。`,mostCovered:"最多遮蓋",bestRouteNight:"最佳路線（最多遮蓋亦最快）",coverOnRoute:"路線上的遮蓋",lgRCover:"路線：有遮蓋",lgRUncov:"路線：無遮蓋",sameRouteNight:"最快路線已經用到附近的有蓋通道，所以亦是最多遮蓋的路線。",noShadeNight:"此行程沿途沒有有蓋通道，所以最快路線亦是最多遮蓋的路線。",covered:"有蓋",uncovered:"分鐘無遮蓋",shadeBetterNight:(x,s)=>`有蓋路線多行 ${x} 分鐘，但多 ${s} 分鐘在有蓋地方步行。`,nightNote:"太陽已經下山，路線改為按有蓋程度排序（下雨時有用），而不是遮蔭。",open24:"24 小時開放（避暑中心）",openUntil:t=>`營業至 ${t}`,closedOpens:t=>`休息中 · ${t} 開放`,hoursApprox:"開放時間只供參考",allClosed:(n,o)=>`附近的避暑點現已關閉，顯示${n}${o?`（${o} 開放）`:""}。`,skipClosed:(a,b)=>`${a}現已關閉，路線改為前往${b}。`,ferryNote:"此路線包括渡輪航程，步行時間已計算在內。",longWalk:m=>`這段路程頗長（約 ${m}）。天氣炎熱時，建議大部分路程乘搭港鐵或巴士。`,transitLink:"查看公共交通",outsideHK:"清涼香港只涵蓋香港，請選擇香港境內的起點及目的地。",geoOutside:"你的位置似乎不在香港，因此改用香港的示範起點。",lgNote:"路線顏色代表每段的遮蔭類型：",finding:"搜尋路線中…",cancel:"取消",pinned:"地圖上選取的位置",loadingMap:"地圖載入中…",clear:"清除",rhLbl:"濕度",nearStart:"起點附近的避暑點",kC:"有蓋行人路",kB:"行人天橋（多數有蓋）",kU:"行人隧道／地下通道",kI:"室內通道",kT:"林蔭街道",kM:"商場（室內有冷氣）",kUnnamed:"未命名路段",lgIndoor:"隧道／室內／商場",loadingShade:"正在載入有蓋通道及商場資料…",routingShade:"正在比較經天橋、隧道及商場的路線…",shadeSample:" 未能載入真實遮蔭數據，暫用示範通道。",swap:"對調起點及目的地",lgRShade:"路線：有遮蔭",lgRSun:"路線：曬太陽",lgFerry:"渡輪航程",segFerry:"渡輪",segShade:"有遮蔭",segSun:"曬太陽",bestRoute:"最佳路線（最陰涼亦最快）",shelOnWay:"沿途有冷氣避暑點",setAbout:"關於及資料來源",crData:"數據、地圖及服務",crCourse:"課程及專題資料",aboutTxt:"清涼香港是香港大學 GEOG2147「以 GIS 建設智慧城市」的學生小組專題。路線只供參考，請留意路牌及天文台的酷熱天氣提示。",sampleStartLbl:"維多利亞公園（示範起點）",tabPublic:"公眾版 · 免費",tabPremium:"進階版",pubTitle:"行陰涼路線",pubHint:"輸入目的地。起點留空即使用你目前的位置。",
   startPh:"我目前的位置",destPh:"最近的避暑點",pick:"在地圖上揀起點",go:"搵最陰涼路線",mostShaded:"最陰涼",fastest:"最快",
   shadeOnRoute:"路線上的遮蔭",otherShelters:"附近其他避暑點",lgCovered:"有蓋行人通道／天橋",lgTrees:"林蔭街道",lgShelter:"避暑點（有冷氣）",
   premFor:"適用於政府部門及非政府機構",plansTitle:"選擇進階版計劃",plansHint:"公眾版永遠免費。進階版計劃收費提供熱風險分析及服務。價錢為示範用建議。",
@@ -1294,9 +1295,9 @@ function renderSugg(field){
   const groups=localSuggest(inp.value,field); if(st.remote.length) groups.push({hdr:t("hdrSearch"),items:st.remote});
   st.items=groups.flatMap(g=>g.items); let i=0;
   box.innerHTML = st.items.length ? groups.filter(g=>g.items.length).map(g=>(g.hdr?`<div class="hdr">${g.hdr}</div>`:"")+g.items.map(it=>
-    `<button type="button" class="si${i===st.idx?" on":""}" role="option" data-k="${i++}">${it.icon}<span><span class="l1">${it.label}</span>${it.sub?`<br><span class="l2">${it.sub}</span>`:""}</span></button>`).join("")).join("")
+    `<button type="button" class="si${i===st.idx?" on":""}" role="option" id="${field}-o${i}" aria-selected="${i===st.idx}" tabindex="-1" data-k="${i++}">${it.icon}<span><span class="l1">${it.label}</span>${it.sub?`<br><span class="l2">${it.sub}</span>`:""}</span></button>`).join("")).join("")
     : `<div class="hdr" style="text-transform:none;letter-spacing:0">${t("noSugg")}</div>`;
-  box.hidden=false;
+  box.hidden=false; inp.setAttribute("aria-activedescendant",st.idx>=0?field+"-o"+st.idx:"");
 }
 function remoteSearch(field){
   const st=SUG[field], q=$(field+"In").value.trim(); st.remote=[]; clearTimeout(st.timer);
@@ -1343,6 +1344,8 @@ function refreshExitRows(){["start","dest"].forEach(f=>{const row=$(f+"Exits");i
     else if(e.key==="Escape"){box.hidden=true}
   });
   inp.addEventListener("blur",()=>setTimeout(()=>{box.hidden=true},180));
+  inp.setAttribute("aria-expanded","false");
+  new MutationObserver(()=>inp.setAttribute("aria-expanded",String(!box.hidden))).observe(box,{attributes:true,attributeFilter:["hidden"]});
   box.addEventListener("mousedown",e=>e.preventDefault());
   box.addEventListener("click",e=>{const b=e.target.closest(".si");if(b)choose(field,st.items[+b.dataset.k])});
   $(field+"Exits").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;const s=$(field+"Exits")._st;
