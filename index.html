@@ -1440,6 +1440,13 @@ function fuzzyPlace(s){ const k=s.toLowerCase().replace(/ station$/,"").replace(
   let best=null; const test=(name,obj)=>{ const n=name.toLowerCase().replace(/[^a-z0-9+]/g,""); const d=lev(k,n); if(d<=(k.length>=9?2:1)&&(!best||d<best.d)) best={d,obj}; };
   MTR.forEach(o=>test(o.en,o)); SHELTERS.forEach(o=>test(o.en,o)); ALIAS.forEach(a=>test(a[3],{lat:a[1],lng:a[2],en:a[3],zh:a[4]}));
   return best&&best.obj; }
+// malls by name from the map data (more reliable for shopping centres than the address search)
+function osmMall(s){ if(!OSM||!OSM.length) return null;
+  const key=x=>String(x||"").toLowerCase().replace(/\b(shopping )?(mall|centre|center|arcade)\b|商場|購物中心/g,"").replace(/[^a-z0-9\u4e00-\u9fff]/g,"");
+  const k=key(s); if(k.length<(/[\u4e00-\u9fff]/.test(k)?2:3)) return null; let best=null;
+  OSM.forEach(o=>{ if(o.k!=="m"||o.lat==null) return; for(const nmx of [o.en,o.zh]){ const n=key(nmx); if(!n) continue;
+      const sc=n===k?0:(k.length>=4&&n.startsWith(k)&&k.length>=.6*n.length)?1+n.length/100-(/(one|一期)$/.test(n)?.05:0):9; if(sc<9&&(!best||sc<best.sc)) best={sc,o}; } });
+  return best?{lat:best.o.lat,lng:best.o.lng,en:cleanName(best.o.en||best.o.zh),zh:cleanName(best.o.zh||best.o.en),type:"Mall"}:null; }
 async function resolvePlace(q,skipLocal){
   const s=q.trim(); if(!s) return null;
   const al=aliasFor(s); if(al) return al;
@@ -1447,6 +1454,7 @@ async function resolvePlace(q,skipLocal){
   // 1) exact name of an MTR station or cool shelter
   const low=norm(s), local=skipLocal?null:MTR.find(o=>norm(o.en)===low||o.zh===low)||SHELTERS.find(o=>o.en.toLowerCase()===s.toLowerCase()||o.zh===s);
   if(local) return local;
+  { const mall=osmMall(s); if(mall) return mall; }
   // 2) HK Government location search (best for named places and addresses)
   try{ const g=await searchGeoInfo(s,3); if(g.length) return g[0]; }catch(e){}
   // 3) Address Lookup Service, only if the answer really matches
